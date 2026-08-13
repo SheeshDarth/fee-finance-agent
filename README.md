@@ -15,6 +15,17 @@ This is a 3-hour assessment prototype for Subhanu Technologies. It converts mess
 - Includes a React dashboard that reads the generated backend output.
 - Includes Firestore-ready credentials/config pattern.
 
+## Current Demo Snapshot
+
+After running `python agent_runner.py` on August 13, 2026:
+
+- Total outstanding: `Rs. 36,000`
+- Total overdue: `Rs. 36,000`
+- Payments needing human review: `P003`, `P004`
+- Reminder drafts generated: `2`
+- Audit events generated: `13`
+- Local dashboard URL after `npm run dev`: `http://127.0.0.1:5173`
+
 ## Setup Already Done
 
 Google Cloud SDK is installed, and the service account JSON was downloaded as:
@@ -121,4 +132,3 @@ The LLM is not allowed to calculate fee balances. The backend computes every amo
 - Add Firestore live listeners in React after Firebase web config is complete.
 - Improve payment matching with bank statement parsing and more explainable scoring.
 - Deploy backend to Cloud Run or Agent Runtime after local validation.
-

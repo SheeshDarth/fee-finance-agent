@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -17,7 +17,10 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import data from "./demo-output.json";
+import { auth, isFirebaseConfigured } from "./firebase";
+import { createFinanceRun, createReviewAction, subscribeToRun } from "./liveData";
 
 const TAB_ITEMS = [
   { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -81,29 +84,78 @@ function EmptyState({ icon: Icon = CheckCircle2, title, detail }) {
   );
 }
 
+function LiveAuth({ user, email, password, setEmail, setPassword, onSignIn, onSignOut, authMessage }) {
+  if (!isFirebaseConfigured) return <StatusBadge tone="neutral"><Landmark size={13} /> Local demo mode</StatusBadge>;
+  if (user) return <div className="authInline"><StatusBadge tone="success"><CheckCircle2 size={13} /> Reviewer signed in</StatusBadge><button type="button" className="quietButton" onClick={onSignOut}>Sign out</button></div>;
+  return <form className="authInline" onSubmit={onSignIn} aria-label="Reviewer sign in">
+    <input aria-label="Reviewer email" type="email" placeholder="Reviewer email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+    <input aria-label="Reviewer password" type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+    <button type="submit" className="quietButton">Sign in</button>
+    {authMessage && <span className="authMessage">{authMessage}</span>}
+  </form>;
+}
+
 function App() {
   const [tab, setTab] = useState("dashboard");
   const [search, setSearch] = useState("");
-  const dashboard = data.dashboard;
+  const [activeData, setActiveData] = useState(data);
+  const [liveRunId, setLiveRunId] = useState(null);
+  const [liveStatus, setLiveStatus] = useState(null);
+  const [liveError, setLiveError] = useState("");
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authMessage, setAuthMessage] = useState("");
+  const dashboard = activeData.dashboard;
+  useEffect(() => (auth ? onAuthStateChanged(auth, setUser) : undefined), []);
+  useEffect(() => {
+    if (!liveRunId) return undefined;
+    return subscribeToRun(liveRunId, (snapshot) => {
+      setLiveStatus(snapshot.status || "RUNNING");
+      setActiveData((current) => ({ ...current, ...snapshot,
+        studentPositions: snapshot.student_positions || current.studentPositions,
+        reconciliationResults: snapshot.reconciliation_results || current.reconciliationResults,
+        collectionWorklist: snapshot.collection_worklist || current.collectionWorklist,
+        reminderDrafts: snapshot.reminder_drafts || current.reminderDrafts,
+        auditEvents: snapshot.audit_events || current.auditEvents,
+      }));
+    }, (error) => setLiveError(error.message));
+  }, [liveRunId]);
   const reviewPayments = useMemo(
-    () => data.reconciliationResults.filter((item) => item.requiresHumanReview),
-    []
+    () => activeData.reconciliationResults.filter((item) => item.requiresHumanReview), [activeData]
   );
   const overdueFamilies = useMemo(
-    () => data.studentPositions.filter((item) => item.overduePaise > 0),
-    []
+    () => activeData.studentPositions.filter((item) => item.overduePaise > 0), [activeData]
   );
   const contactableFamilies = useMemo(
-    () => data.collectionWorklist.filter((item) => item.shouldContact),
-    []
+    () => activeData.collectionWorklist.filter((item) => item.shouldContact), [activeData]
   );
   const visibleWorklist = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return data.collectionWorklist;
-    return data.collectionWorklist.filter((row) =>
+    if (!query) return activeData.collectionWorklist;
+    return activeData.collectionWorklist.filter((row) =>
       `${row.studentName} ${row.studentId} ${row.class} ${row.ageingBucket}`.toLowerCase().includes(query)
     );
-  }, [search]);
+  }, [activeData, search]);
+
+  const requestLiveRun = async () => {
+    try {
+      const runId = await createFinanceRun(activeData.asOf);
+      setLiveRunId(runId);
+      setLiveStatus("PENDING");
+      setLiveError("");
+    } catch (error) { setLiveError(error.message); }
+  };
+  const signIn = async (event) => {
+    event.preventDefault();
+    try { await signInWithEmailAndPassword(auth, email, password); setPassword(""); setAuthMessage(""); }
+    catch (error) { setAuthMessage(error.message); }
+  };
+  const submitReviewAction = async (targetType, targetId, decision) => {
+    if (!liveRunId || !user) return;
+    try { await createReviewAction(liveRunId, { targetType, targetId, decision, reviewerUid: user.uid }); setLiveError(""); }
+    catch (error) { setLiveError(error.message); }
+  };
 
   const selectTab = (nextTab) => {
     setTab(nextTab);
@@ -136,8 +188,8 @@ function App() {
               {id === "reconciliation" && reviewPayments.length > 0 && (
                 <b>{reviewPayments.length}</b>
               )}
-              {id === "reminders" && data.reminderDrafts.length > 0 && (
-                <b>{data.reminderDrafts.length}</b>
+              {id === "reminders" && activeData.reminderDrafts.length > 0 && (
+                <b>{activeData.reminderDrafts.length}</b>
               )}
             </button>
           ))}
@@ -150,7 +202,7 @@ function App() {
               <span>Deterministic paise ledger</span>
             </div>
           </div>
-          <p className="sidebarFoot">Local demo snapshot</p>
+          <p className="sidebarFoot">{liveRunId ? `Live run ${liveRunId.slice(0, 7)}` : "Local demo snapshot"}</p>
         </div>
       </aside>
 
@@ -162,10 +214,13 @@ function App() {
             <p className="pageSubtitle">School fee collection and reconciliation workspace</p>
           </div>
           <div className="runMeta">
-            <StatusBadge tone="success"><CheckCircle2 size={13} /> Snapshot generated</StatusBadge>
-            <span>As of {formatDate(data.asOf)}</span>
+            <LiveAuth user={user} email={email} password={password} setEmail={setEmail} setPassword={setPassword} onSignIn={signIn} onSignOut={() => signOut(auth)} authMessage={authMessage} />
+            <button type="button" className="runButton" onClick={requestLiveRun} disabled={!isFirebaseConfigured || !user}><ArrowUpRight size={14} /> Run live workflow</button>
+            <StatusBadge tone={liveRunId ? "success" : "neutral"}><CheckCircle2 size={13} /> {liveRunId ? `Live ${liveStatus || "connecting"}` : "Snapshot generated"}</StatusBadge>
+            <span>As of {formatDate(activeData.asOf)}</span>
           </div>
         </header>
+        {liveError && <div className="errorBanner" role="alert"><AlertTriangle size={16} />{liveError}</div>}
 
         {tab === "dashboard" && (
           <>
@@ -189,7 +244,7 @@ function App() {
                   <ArrowUpRight size={14} />
                 </button>
                 <button type="button" onClick={() => selectTab("reminders")}>
-                  <strong>{data.reminderDrafts.length}</strong>
+                  <strong>{activeData.reminderDrafts.length}</strong>
                   <span>drafts awaiting review</span>
                   <ArrowUpRight size={14} />
                 </button>
@@ -201,6 +256,7 @@ function App() {
               <StatCard label="Verified collected" value={money(dashboard.totalCollected)} note="Confirmed payments only" icon={CheckCircle2} tone="success" />
               <StatCard label="Outstanding" value={money(dashboard.totalOutstanding)} note={`${overdueFamilies.length} families with balance`} icon={ClipboardCheck} tone="warning" />
               <StatCard label="Overdue" value={money(dashboard.totalOverdue)} note="Past due date, unpaid" icon={Clock3} tone="danger" />
+              <StatCard label="Late fees" value={money(dashboard.totalLateFee)} note="Policy-derived charges" icon={BadgeIndianRupee} tone="warning" />
             </section>
 
             <section className="panel compactCallout">
@@ -248,9 +304,9 @@ function App() {
               <SectionHeader eyebrow="By fee head" title="Fee-head exposure" detail="The ledger breaks every fee head into due, collected, outstanding, and overdue." />
               <div className="tableWrap">
                 <table>
-                  <thead><tr><th>Fee head</th><th>Items</th><th>Net due</th><th>Collected</th><th>Outstanding</th><th>Overdue</th></tr></thead>
+                  <thead><tr><th>Fee head</th><th>Items</th><th>Net due</th><th>Collected</th><th>Outstanding</th><th>Overdue</th><th>Late fee</th></tr></thead>
                   <tbody>{Object.entries(dashboard.byFeeHead).map(([head, row]) => (
-                    <tr key={head}><td><strong className="capitalize">{head}</strong></td><td>{row.count}</td><td>{row.netDue}</td><td className="positiveText">{row.collected}</td><td>{row.outstanding}</td><td className={row.overduePaise ? "dangerText" : "mutedText"}>{row.overdue}</td></tr>
+                    <tr key={head}><td><strong className="capitalize">{head}</strong></td><td>{row.count}</td><td>{row.netDue}</td><td className="positiveText">{row.collected}</td><td>{row.outstanding}</td><td className={row.overduePaise ? "dangerText" : "mutedText"}>{row.overdue}</td><td>{row.lateFee}</td></tr>
                   ))}</tbody>
                 </table>
               </div>
@@ -265,7 +321,7 @@ function App() {
             <div className="tableWrap">
               <table className="reconciliationTable">
                 <thead><tr><th>Payment</th><th>Amount</th><th>Received</th><th>Match</th><th>Evidence / reason</th><th>Ledger treatment</th></tr></thead>
-                <tbody>{data.reconciliationResults.map((item) => {
+                <tbody>{activeData.reconciliationResults.map((item) => {
                   const isReview = item.requiresHumanReview;
                   const tone = item.confidence === "CONFIDENT" ? "success" : item.confidence === "POSSIBLE" ? "warning" : "danger";
                   return <tr key={item.paymentId} className={isReview ? "reviewRow" : ""}>
@@ -274,7 +330,7 @@ function App() {
                     <td>{formatDate(item.date)}</td>
                     <td>{item.matchedStudentId || <span className="mutedText">Unmatched</span>}<span className="cellSub"><StatusBadge tone={tone}>{item.confidence}</StatusBadge></span></td>
                     <td className="reasonCell">{item.reason}</td>
-                    <td>{isReview ? <StatusBadge tone="warning">Excluded / review</StatusBadge> : <StatusBadge tone="success">Posted to ledger</StatusBadge>}</td>
+                    <td>{isReview ? <>{liveRunId && user ? <button type="button" className="smallAction" onClick={() => submitReviewAction("PAYMENT", item.paymentId, item.matchedStudentId ? "CONFIRM_MATCH" : "MARK_REVIEWED")}>Record reviewer action</button> : <StatusBadge tone="warning">Excluded / review</StatusBadge>}</> : <StatusBadge tone="success">Posted to ledger</StatusBadge>}</td>
                   </tr>;
                 })}</tbody>
               </table>
@@ -285,16 +341,17 @@ function App() {
         {tab === "worklist" && (
           <section className="panel">
             <SectionHeader eyebrow="Collections" title="Prioritized collection worklist" detail="Ranked by overdue age and outstanding amount. Approved payment plans are visible but not contacted." action={<label className="searchBox"><Search size={16} /><input aria-label="Search worklist" placeholder="Search family or class" value={search} onChange={(event) => setSearch(event.target.value)} /></label>} />
-            <div className="worklistSummary"><span><strong>{visibleWorklist.length}</strong> families shown</span><span><strong>{contactableFamilies.length}</strong> contact now</span><span><strong>{data.collectionWorklist.filter((row) => row.hasApprovedPaymentPlan).length}</strong> on approved plan</span></div>
+            <div className="worklistSummary"><span><strong>{visibleWorklist.length}</strong> families shown</span><span><strong>{contactableFamilies.length}</strong> contact now</span><span><strong>{activeData.collectionWorklist.filter((row) => row.hasApprovedPaymentPlan).length}</strong> on approved plan</span></div>
             <div className="tableWrap">
               <table>
-                <thead><tr><th>Rank</th><th>Family</th><th>Class</th><th>Balance</th><th>Ageing</th><th>Reason</th><th>Action</th></tr></thead>
+                <thead><tr><th>Rank</th><th>Family</th><th>Class</th><th>Balance</th><th>Ageing</th><th>Score</th><th>Reason</th><th>Action</th></tr></thead>
                 <tbody>{visibleWorklist.map((row) => <tr key={row.studentId}>
                   <td><span className="rank">{row.rank}</span></td>
                   <td><strong>{row.studentName}</strong><span className="cellSub">{row.studentId}</span></td>
                   <td>{row.class}</td>
                   <td><strong>{row.outstanding}</strong><span className="cellSub">{row.daysOverdue ? `${row.daysOverdue} days overdue` : "Not overdue"}</span></td>
                   <td><StatusBadge tone={row.ageingBucket === "60+" ? "danger" : row.ageingBucket === "NOT_OVERDUE" ? "neutral" : "warning"}>{row.ageingBucket}</StatusBadge></td>
+                  <td><strong>{row.score}</strong><span className="cellSub">{row.planCompliance}</span></td>
                   <td className="reasonCell">{row.reason}</td>
                   <td>{row.shouldContact ? <StatusBadge tone="danger">Contact now</StatusBadge> : <StatusBadge tone="neutral">Plan on file</StatusBadge>}</td>
                 </tr>)}</tbody>
@@ -308,22 +365,22 @@ function App() {
             <SectionHeader eyebrow="Human review required" title="Reminder drafts" detail="Messages are deterministic templates for accounts-office review. Nothing is sent." action={<StatusBadge tone="neutral"><FileText size={13} /> Draft only</StatusBadge>} />
             <div className="reviewBanner neutralBanner"><ShieldCheck size={17} /><span>Amounts come from the verified ledger and are checked before a draft is displayed.</span></div>
             <div className="draftGrid">
-              {data.reminderDrafts.map((draft) => <article className="draftCard" key={draft.studentId}>
+              {activeData.reminderDrafts.map((draft) => <article className="draftCard" key={draft.studentId}>
                 <div className="draftTop"><div><strong>{draft.studentName}</strong><span>{draft.guardianName}</span></div><StatusBadge tone={draft.ageingBucket === "31-60" ? "warning" : "neutral"}>{draft.ageingBucket}</StatusBadge></div>
-                <div className="draftMeta"><span>{draft.tone}</span><strong>{draft.ageingBucket === "31-60" ? "Firm" : "Polite"} tone</strong></div>
+                <div className="draftMeta"><span>{draft.tone} / due {draft.dueDate}</span><strong>{draft.amount}</strong></div>
                 <p className="draftMessage">{draft.message}</p>
-                <div className="draftFooter"><StatusBadge tone="success"><CheckCircle2 size={12} /> {draft.validationNote}</StatusBadge><span>Not sent</span></div>
+                <div className="draftFooter"><StatusBadge tone="success"><CheckCircle2 size={12} /> {draft.validationNote}</StatusBadge><span>{draft.generationSource} / not sent</span>{liveRunId && user && <button type="button" className="smallAction" onClick={() => submitReviewAction("REMINDER", draft.studentId, "APPROVE_DRAFT")}>Approve draft</button>}</div>
               </article>)}
             </div>
-            {data.reminderDrafts.length === 0 && <EmptyState icon={MessageSquareText} title="No drafts" detail="No eligible overdue family needs a reminder draft." />}
+            {activeData.reminderDrafts.length === 0 && <EmptyState icon={MessageSquareText} title="No drafts" detail="No eligible overdue family needs a reminder draft." />}
           </section>
         )}
 
         {tab === "audit" && (
           <section className="panel">
-            <SectionHeader eyebrow="Traceability" title="Audit trail" detail="Every run, reconciliation decision, student position, and draft is timestamped." action={<StatusBadge tone="success"><ShieldCheck size={13} /> {data.auditEvents.length} events</StatusBadge>} />
+            <SectionHeader eyebrow="Traceability" title="Audit trail" detail="Every run, reconciliation decision, student position, and draft is timestamped." action={<StatusBadge tone="success"><ShieldCheck size={13} /> {activeData.auditEvents.length} events</StatusBadge>} />
             <div className="auditList">
-              {data.auditEvents.map((event, index) => <article className="auditRow" key={`${event.eventType}-${index}`}>
+              {activeData.auditEvents.map((event, index) => <article className="auditRow" key={`${event.eventType}-${index}`}>
                 <span className={`auditDot ${event.eventType.includes("REVIEW") ? "auditWarn" : event.eventType.includes("COMPLETED") ? "auditSuccess" : ""}`} />
                 <div className="auditMain"><strong>{event.eventType.replaceAll("_", " ")}</strong><span>{event.actor}</span></div>
                 <time>{new Date(event.timestamp).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</time>
@@ -332,7 +389,7 @@ function App() {
           </section>
         )}
 
-        <footer className="pageFooter"><span><ShieldCheck size={14} /> Figures are deterministic and traceable to source records.</span><span>Local JSON demo / Firestore write optional</span></footer>
+        <footer className="pageFooter"><span><ShieldCheck size={14} /> Figures are deterministic and traceable to source records.</span><span>{liveRunId ? "Live Firestore subscriptions active" : "Local JSON demo / Firestore workflow optional"}</span></footer>
       </main>
     </div>
   );

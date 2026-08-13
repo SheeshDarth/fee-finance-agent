@@ -2,6 +2,13 @@
 
 These diagrams are Mermaid source artifacts so they render in GitHub and remain editable.
 
+Rendered PNG exports are included for the walkthrough and offline review:
+
+- [Overall system architecture](assets/overall-system-architecture.png)
+- [Finance run workflow](assets/finance-run-workflow.png)
+- [Data relationship model](assets/data-relationship.png)
+- [Live run and reviewer state](assets/live-run-reviewer-state.png)
+
 ## 1. System Architecture
 
 ~~~mermaid
@@ -136,4 +143,3 @@ stateDiagram-v2
 ~~~
 
 The current prototype records reviewer actions and audit events. A production extension should re-run the immutable ledger after an approved match or reminder decision, which is documented as a limitation.
-

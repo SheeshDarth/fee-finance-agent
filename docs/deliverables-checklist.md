@@ -17,14 +17,13 @@ Audited against the supplied Subhanu Technologies Fee Collection & Finance Agent
 | Assumptions and limitations / what to build next | README limitations and validation.md | PASS |
 | Multiple fee heads, instalments, partial payments, concessions, waivers, late fees | Fixture files and ledger invariants | PASS |
 | Auditable reminders, waivers, plans, and approving authority | Audit events include reminder creation, WAIVER_APPROVED, PAYMENT_PLAN_APPROVED, and concession approvals | PASS |
-| Google ADK 2.0 or justified equivalent | agent-framework.md | PASS |
+| Google ADK 2.0 or justified equivalent | `backend/feeops_adk/agent.py`, agent-framework.md | PASS |
 | Optional demo video | Not required; demo-script.md is provided instead | N/A |
-| Firebase/Firestore live path | Firebase app registered, rules deployed, Firestore worker tested live | PARTIAL: Auth needs billing |
-| Live Gemini | SDK and validation wired, live call attempted | PARTIAL: Vertex AI needs billing |
+| Firebase/Firestore live path | Existing test project was live-tested; company project is billing-enabled but awaits Firebase registration/database permission | PARTIAL: one-time company IAM/console setup remains |
+| Live Gemini | SDK and ADK wrapper wired; deterministic validation remains mandatory | PARTIAL: company service-account key and deployment test remain |
 | Reminder sending | Explicitly not implemented per assignment rule | N/A by design |
 | Production deployment, bank imports, next-month forecasting | Documented limitations; outside the 3-hour assessment scope | N/A by design |
 
 ## Verdict
 
 The assessment deliverables are complete and evidenced. The optional cloud enhancements are implemented but two runtime capabilities remain externally blocked by the project's disabled billing: Firebase Authentication and Vertex AI Gemini. The deterministic local workflow is fully runnable and the Firestore worker is live-tested.
-

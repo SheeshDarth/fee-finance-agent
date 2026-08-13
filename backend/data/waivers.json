@@ -1,0 +1,11 @@
+[
+  {
+    "waiverId": "W001",
+    "studentId": "S003",
+    "amountPaise": 200000,
+    "reason": "Lab breakage fee waived after review",
+    "approvedBy": "Principal",
+    "approvedAt": "2026-07-12"
+  }
+]
+

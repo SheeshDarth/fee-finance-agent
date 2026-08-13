@@ -1,0 +1,35 @@
+[
+  {
+    "studentId": "S001",
+    "name": "Aarav Sharma",
+    "class": "8A",
+    "guardianName": "Mr. Rakesh Sharma",
+    "guardianPhone": "demo-only",
+    "status": "ACTIVE"
+  },
+  {
+    "studentId": "S002",
+    "name": "Meera Iyer",
+    "class": "7B",
+    "guardianName": "Ms. Kavita Iyer",
+    "guardianPhone": "demo-only",
+    "status": "ACTIVE"
+  },
+  {
+    "studentId": "S003",
+    "name": "Kabir Khan",
+    "class": "8A",
+    "guardianName": "Mr. Imran Khan",
+    "guardianPhone": "demo-only",
+    "status": "ACTIVE"
+  },
+  {
+    "studentId": "S004",
+    "name": "Diya Nair",
+    "class": "6C",
+    "guardianName": "Ms. Anjali Nair",
+    "guardianPhone": "demo-only",
+    "status": "ACTIVE"
+  }
+]
+

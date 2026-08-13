@@ -1,0 +1,47 @@
+[
+  {
+    "paymentId": "P001",
+    "studentId": "S001",
+    "invoiceRef": null,
+    "date": "2026-07-01",
+    "amountPaise": 1500000,
+    "mode": "UPI",
+    "rawNarration": "UPI SHARMA SCHOOL FEE"
+  },
+  {
+    "paymentId": "P002",
+    "studentId": "S002",
+    "invoiceRef": "F003",
+    "date": "2026-07-19",
+    "amountPaise": 1500000,
+    "mode": "BANK_TRANSFER",
+    "rawNarration": "NEFT MEERA IYER TERM1"
+  },
+  {
+    "paymentId": "P003",
+    "studentId": null,
+    "invoiceRef": null,
+    "date": "2026-07-30",
+    "amountPaise": 1000000,
+    "mode": "CHEQUE",
+    "rawNarration": "CHQ SCHOOL FEE KHAN"
+  },
+  {
+    "paymentId": "P004",
+    "studentId": null,
+    "invoiceRef": null,
+    "date": "2026-08-03",
+    "amountPaise": 900000,
+    "mode": "CASH",
+    "rawNarration": "CASH RECEIVED"
+  },
+  {
+    "paymentId": "P005",
+    "studentId": "S004",
+    "invoiceRef": "F007",
+    "date": "2026-08-10",
+    "amountPaise": 2550000,
+    "mode": "UPI",
+    "rawNarration": "UPI DIYA NAIR FULL TERM"
+  }
+]

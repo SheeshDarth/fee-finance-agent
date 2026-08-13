@@ -1,0 +1,603 @@
+{
+  "status": "COMPLETE",
+  "asOf": "2026-08-13",
+  "dashboard": {
+    "asOf": "2026-08-13",
+    "totalGrossDuePaise": 11550000,
+    "totalConcessionPaise": 1200000,
+    "totalWaiverPaise": 200000,
+    "totalNetDuePaise": 10150000,
+    "totalCollectedPaise": 6550000,
+    "totalOutstandingPaise": 3600000,
+    "totalOverduePaise": 3600000,
+    "ageingBuckets": {
+      "0-30": {
+        "amountPaise": 500000,
+        "amount": "Rs. 5,000"
+      },
+      "31-60": {
+        "amountPaise": 1300000,
+        "amount": "Rs. 13,000"
+      },
+      "60+": {
+        "amountPaise": 1800000,
+        "amount": "Rs. 18,000"
+      },
+      "NOT_OVERDUE": {
+        "amountPaise": 0,
+        "amount": "Rs. 0"
+      }
+    },
+    "byClass": {
+      "8A": {
+        "netDuePaise": 5600000,
+        "collectedPaise": 2500000,
+        "overduePaise": 3100000,
+        "netDue": "Rs. 56,000",
+        "collected": "Rs. 25,000",
+        "overdue": "Rs. 31,000"
+      },
+      "7B": {
+        "netDuePaise": 2000000,
+        "collectedPaise": 1500000,
+        "overduePaise": 500000,
+        "netDue": "Rs. 20,000",
+        "collected": "Rs. 15,000",
+        "overdue": "Rs. 5,000"
+      },
+      "6C": {
+        "netDuePaise": 2550000,
+        "collectedPaise": 2550000,
+        "overduePaise": 0,
+        "netDue": "Rs. 25,500",
+        "collected": "Rs. 25,500",
+        "overdue": "Rs. 0"
+      }
+    },
+    "byFeeHead": {
+      "tuition": {
+        "grossDuePaise": 9700000,
+        "count": 4,
+        "grossDue": "Rs. 97,000"
+      },
+      "transport": {
+        "grossDuePaise": 800000,
+        "count": 1,
+        "grossDue": "Rs. 8,000"
+      },
+      "lab": {
+        "grossDuePaise": 300000,
+        "count": 1,
+        "grossDue": "Rs. 3,000"
+      },
+      "exam": {
+        "grossDuePaise": 400000,
+        "count": 1,
+        "grossDue": "Rs. 4,000"
+      },
+      "books": {
+        "grossDuePaise": 350000,
+        "count": 1,
+        "grossDue": "Rs. 3,500"
+      }
+    },
+    "paymentModeBreakdown": {
+      "UPI": {
+        "amountPaise": 4050000,
+        "amount": "Rs. 40,500"
+      },
+      "BANK_TRANSFER": {
+        "amountPaise": 1500000,
+        "amount": "Rs. 15,000"
+      },
+      "CHEQUE": {
+        "amountPaise": 1000000,
+        "amount": "Rs. 10,000"
+      }
+    },
+    "totalGrossDue": "Rs. 115,500",
+    "totalConcession": "Rs. 12,000",
+    "totalWaiver": "Rs. 2,000",
+    "totalNetDue": "Rs. 101,500",
+    "totalCollected": "Rs. 65,500",
+    "totalOutstanding": "Rs. 36,000",
+    "totalOverdue": "Rs. 36,000"
+  },
+  "studentPositions": [
+    {
+      "studentId": "S001",
+      "studentName": "Aarav Sharma",
+      "class": "8A",
+      "guardianName": "Mr. Rakesh Sharma",
+      "grossDuePaise": 3300000,
+      "grossDue": "Rs. 33,000",
+      "concessionPaise": 500000,
+      "concession": "Rs. 5,000",
+      "waiverPaise": 0,
+      "waiver": "Rs. 0",
+      "netDuePaise": 2800000,
+      "netDue": "Rs. 28,000",
+      "paidPaise": 1500000,
+      "paid": "Rs. 15,000",
+      "outstandingPaise": 1300000,
+      "outstanding": "Rs. 13,000",
+      "overduePaise": 1300000,
+      "overdue": "Rs. 13,000",
+      "ageingBucket": "31-60",
+      "daysOverdue": 59,
+      "hasApprovedPaymentPlan": false,
+      "shouldDraftReminder": true,
+      "trace": {
+        "feeItemIds": [
+          "F001",
+          "F002"
+        ],
+        "paymentIds": [
+          "P001"
+        ],
+        "concessionIds": [
+          "C001"
+        ],
+        "waiverIds": [],
+        "paymentPlanIds": []
+      }
+    },
+    {
+      "studentId": "S002",
+      "studentName": "Meera Iyer",
+      "class": "7B",
+      "guardianName": "Ms. Kavita Iyer",
+      "grossDuePaise": 2700000,
+      "grossDue": "Rs. 27,000",
+      "concessionPaise": 700000,
+      "concession": "Rs. 7,000",
+      "waiverPaise": 0,
+      "waiver": "Rs. 0",
+      "netDuePaise": 2000000,
+      "netDue": "Rs. 20,000",
+      "paidPaise": 1500000,
+      "paid": "Rs. 15,000",
+      "outstandingPaise": 500000,
+      "outstanding": "Rs. 5,000",
+      "overduePaise": 500000,
+      "overdue": "Rs. 5,000",
+      "ageingBucket": "0-30",
+      "daysOverdue": 24,
+      "hasApprovedPaymentPlan": false,
+      "shouldDraftReminder": true,
+      "trace": {
+        "feeItemIds": [
+          "F003",
+          "F004"
+        ],
+        "paymentIds": [
+          "P002"
+        ],
+        "concessionIds": [
+          "C002"
+        ],
+        "waiverIds": [],
+        "paymentPlanIds": []
+      }
+    },
+    {
+      "studentId": "S003",
+      "studentName": "Kabir Khan",
+      "class": "8A",
+      "guardianName": "Mr. Imran Khan",
+      "grossDuePaise": 3000000,
+      "grossDue": "Rs. 30,000",
+      "concessionPaise": 0,
+      "concession": "Rs. 0",
+      "waiverPaise": 200000,
+      "waiver": "Rs. 2,000",
+      "netDuePaise": 2800000,
+      "netDue": "Rs. 28,000",
+      "paidPaise": 1000000,
+      "paid": "Rs. 10,000",
+      "outstandingPaise": 1800000,
+      "outstanding": "Rs. 18,000",
+      "overduePaise": 1800000,
+      "overdue": "Rs. 18,000",
+      "ageingBucket": "60+",
+      "daysOverdue": 90,
+      "hasApprovedPaymentPlan": true,
+      "shouldDraftReminder": false,
+      "trace": {
+        "feeItemIds": [
+          "F005",
+          "F006"
+        ],
+        "paymentIds": [
+          "P003"
+        ],
+        "concessionIds": [],
+        "waiverIds": [
+          "W001"
+        ],
+        "paymentPlanIds": [
+          "PP001"
+        ]
+      }
+    },
+    {
+      "studentId": "S004",
+      "studentName": "Diya Nair",
+      "class": "6C",
+      "guardianName": "Ms. Anjali Nair",
+      "grossDuePaise": 2550000,
+      "grossDue": "Rs. 25,500",
+      "concessionPaise": 0,
+      "concession": "Rs. 0",
+      "waiverPaise": 0,
+      "waiver": "Rs. 0",
+      "netDuePaise": 2550000,
+      "netDue": "Rs. 25,500",
+      "paidPaise": 2550000,
+      "paid": "Rs. 25,500",
+      "outstandingPaise": 0,
+      "outstanding": "Rs. 0",
+      "overduePaise": 0,
+      "overdue": "Rs. 0",
+      "ageingBucket": "NOT_OVERDUE",
+      "daysOverdue": 0,
+      "hasApprovedPaymentPlan": false,
+      "shouldDraftReminder": false,
+      "trace": {
+        "feeItemIds": [
+          "F007",
+          "F008"
+        ],
+        "paymentIds": [
+          "P005"
+        ],
+        "concessionIds": [],
+        "waiverIds": [],
+        "paymentPlanIds": []
+      }
+    }
+  ],
+  "reconciliationResults": [
+    {
+      "paymentId": "P001",
+      "amountPaise": 1500000,
+      "mode": "UPI",
+      "date": "2026-07-01",
+      "rawNarration": "UPI SHARMA SCHOOL FEE",
+      "matchedStudentId": "S001",
+      "confidence": "CONFIDENT",
+      "requiresHumanReview": false,
+      "reason": "Payment already carries known student ID S001."
+    },
+    {
+      "paymentId": "P002",
+      "amountPaise": 1500000,
+      "mode": "BANK_TRANSFER",
+      "date": "2026-07-19",
+      "rawNarration": "NEFT MEERA IYER TERM1",
+      "matchedStudentId": "S002",
+      "confidence": "CONFIDENT",
+      "requiresHumanReview": false,
+      "reason": "Invoice reference F003 maps directly to student S002."
+    },
+    {
+      "paymentId": "P003",
+      "amountPaise": 1000000,
+      "mode": "CHEQUE",
+      "date": "2026-07-30",
+      "rawNarration": "CHQ SCHOOL FEE KHAN",
+      "matchedStudentId": "S003",
+      "confidence": "POSSIBLE",
+      "requiresHumanReview": true,
+      "reason": "Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided."
+    },
+    {
+      "paymentId": "P004",
+      "amountPaise": 900000,
+      "mode": "CASH",
+      "date": "2026-08-03",
+      "rawNarration": "CASH RECEIVED",
+      "matchedStudentId": null,
+      "confidence": "NEEDS_REVIEW",
+      "requiresHumanReview": true,
+      "reason": "No invoice reference, student ID, or reliable narration match found."
+    },
+    {
+      "paymentId": "P005",
+      "amountPaise": 2550000,
+      "mode": "UPI",
+      "date": "2026-08-10",
+      "rawNarration": "UPI DIYA NAIR FULL TERM",
+      "matchedStudentId": "S004",
+      "confidence": "CONFIDENT",
+      "requiresHumanReview": false,
+      "reason": "Invoice reference F007 maps directly to student S004."
+    }
+  ],
+  "collectionWorklist": [
+    {
+      "studentId": "S003",
+      "studentName": "Kabir Khan",
+      "class": "8A",
+      "outstandingPaise": 1800000,
+      "outstanding": "Rs. 18,000",
+      "ageingBucket": "60+",
+      "daysOverdue": 90,
+      "hasApprovedPaymentPlan": true,
+      "shouldContact": false,
+      "score": 2100,
+      "reason": "Kabir Khan has Rs. 18,000 outstanding, but an approved payment plan is already on record.",
+      "rank": 1
+    },
+    {
+      "studentId": "S001",
+      "studentName": "Aarav Sharma",
+      "class": "8A",
+      "outstandingPaise": 1300000,
+      "outstanding": "Rs. 13,000",
+      "ageingBucket": "31-60",
+      "daysOverdue": 59,
+      "hasApprovedPaymentPlan": false,
+      "shouldContact": true,
+      "score": 1500,
+      "reason": "Aarav Sharma has Rs. 13,000 outstanding, 59 days overdue in the 31-60 bucket.",
+      "rank": 2
+    },
+    {
+      "studentId": "S002",
+      "studentName": "Meera Iyer",
+      "class": "7B",
+      "outstandingPaise": 500000,
+      "outstanding": "Rs. 5,000",
+      "ageingBucket": "0-30",
+      "daysOverdue": 24,
+      "hasApprovedPaymentPlan": false,
+      "shouldContact": true,
+      "score": 600,
+      "reason": "Meera Iyer has Rs. 5,000 outstanding, 24 days overdue in the 0-30 bucket.",
+      "rank": 3
+    }
+  ],
+  "reminderDrafts": [
+    {
+      "studentId": "S001",
+      "studentName": "Aarav Sharma",
+      "guardianName": "Mr. Rakesh Sharma",
+      "ageingBucket": "31-60",
+      "tone": "firm but respectful reminder",
+      "status": "DRAFT_FOR_REVIEW",
+      "message": "Dear Mr. Rakesh Sharma, this is a firm but respectful reminder for Aarav Sharma's school fee balance of Rs. 13,000. The amount has been pending since the due date connected to the current instalment and is now 59 days overdue. Please treat this as a draft notice for accounts-office review before any parent communication is sent.",
+      "llmGuardrail": "Amounts are supplied from ledger output; generated text is rejected if it contains unknown currency values.",
+      "validationPassed": true,
+      "validationNote": "All monetary figures match deterministic ledger values."
+    },
+    {
+      "studentId": "S002",
+      "studentName": "Meera Iyer",
+      "guardianName": "Ms. Kavita Iyer",
+      "ageingBucket": "0-30",
+      "tone": "polite reminder",
+      "status": "DRAFT_FOR_REVIEW",
+      "message": "Dear Ms. Kavita Iyer, this is a polite reminder for Meera Iyer's school fee balance of Rs. 5,000. The amount has been pending since the due date connected to the current instalment and is now 24 days overdue. Please treat this as a draft notice for accounts-office review before any parent communication is sent.",
+      "llmGuardrail": "Amounts are supplied from ledger output; generated text is rejected if it contains unknown currency values.",
+      "validationPassed": true,
+      "validationNote": "All monetary figures match deterministic ledger values."
+    }
+  ],
+  "auditEvents": [
+    {
+      "eventType": "FINANCE_RUN_STARTED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.163030+00:00",
+      "details": {
+        "asOf": "2026-08-13"
+      }
+    },
+    {
+      "eventType": "PAYMENT_RECONCILED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "paymentId": "P001",
+        "amountPaise": 1500000,
+        "mode": "UPI",
+        "date": "2026-07-01",
+        "rawNarration": "UPI SHARMA SCHOOL FEE",
+        "matchedStudentId": "S001",
+        "confidence": "CONFIDENT",
+        "requiresHumanReview": false,
+        "reason": "Payment already carries known student ID S001."
+      }
+    },
+    {
+      "eventType": "PAYMENT_RECONCILED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "paymentId": "P002",
+        "amountPaise": 1500000,
+        "mode": "BANK_TRANSFER",
+        "date": "2026-07-19",
+        "rawNarration": "NEFT MEERA IYER TERM1",
+        "matchedStudentId": "S002",
+        "confidence": "CONFIDENT",
+        "requiresHumanReview": false,
+        "reason": "Invoice reference F003 maps directly to student S002."
+      }
+    },
+    {
+      "eventType": "PAYMENT_REQUIRES_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "paymentId": "P003",
+        "amountPaise": 1000000,
+        "mode": "CHEQUE",
+        "date": "2026-07-30",
+        "rawNarration": "CHQ SCHOOL FEE KHAN",
+        "matchedStudentId": "S003",
+        "confidence": "POSSIBLE",
+        "requiresHumanReview": true,
+        "reason": "Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided."
+      }
+    },
+    {
+      "eventType": "PAYMENT_REQUIRES_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "paymentId": "P004",
+        "amountPaise": 900000,
+        "mode": "CASH",
+        "date": "2026-08-03",
+        "rawNarration": "CASH RECEIVED",
+        "matchedStudentId": null,
+        "confidence": "NEEDS_REVIEW",
+        "requiresHumanReview": true,
+        "reason": "No invoice reference, student ID, or reliable narration match found."
+      }
+    },
+    {
+      "eventType": "PAYMENT_RECONCILED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "paymentId": "P005",
+        "amountPaise": 2550000,
+        "mode": "UPI",
+        "date": "2026-08-10",
+        "rawNarration": "UPI DIYA NAIR FULL TERM",
+        "matchedStudentId": "S004",
+        "confidence": "CONFIDENT",
+        "requiresHumanReview": false,
+        "reason": "Invoice reference F007 maps directly to student S004."
+      }
+    },
+    {
+      "eventType": "STUDENT_POSITION_CALCULATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S001",
+        "outstandingPaise": 1300000,
+        "trace": {
+          "feeItemIds": [
+            "F001",
+            "F002"
+          ],
+          "paymentIds": [
+            "P001"
+          ],
+          "concessionIds": [
+            "C001"
+          ],
+          "waiverIds": [],
+          "paymentPlanIds": []
+        }
+      }
+    },
+    {
+      "eventType": "STUDENT_POSITION_CALCULATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S002",
+        "outstandingPaise": 500000,
+        "trace": {
+          "feeItemIds": [
+            "F003",
+            "F004"
+          ],
+          "paymentIds": [
+            "P002"
+          ],
+          "concessionIds": [
+            "C002"
+          ],
+          "waiverIds": [],
+          "paymentPlanIds": []
+        }
+      }
+    },
+    {
+      "eventType": "STUDENT_POSITION_CALCULATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S003",
+        "outstandingPaise": 1800000,
+        "trace": {
+          "feeItemIds": [
+            "F005",
+            "F006"
+          ],
+          "paymentIds": [
+            "P003"
+          ],
+          "concessionIds": [],
+          "waiverIds": [
+            "W001"
+          ],
+          "paymentPlanIds": [
+            "PP001"
+          ]
+        }
+      }
+    },
+    {
+      "eventType": "STUDENT_POSITION_CALCULATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S004",
+        "outstandingPaise": 0,
+        "trace": {
+          "feeItemIds": [
+            "F007",
+            "F008"
+          ],
+          "paymentIds": [
+            "P005"
+          ],
+          "concessionIds": [],
+          "waiverIds": [],
+          "paymentPlanIds": []
+        }
+      }
+    },
+    {
+      "eventType": "REMINDER_DRAFT_CREATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S001",
+        "status": "DRAFT_FOR_REVIEW",
+        "validationPassed": true
+      }
+    },
+    {
+      "eventType": "REMINDER_DRAFT_CREATED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentId": "S002",
+        "status": "DRAFT_FOR_REVIEW",
+        "validationPassed": true
+      }
+    },
+    {
+      "eventType": "FINANCE_RUN_COMPLETED",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-13T06:46:02.164063+00:00",
+      "details": {
+        "studentCount": 4,
+        "reconciliationCount": 5,
+        "draftCount": 2
+      }
+    }
+  ],
+  "notes": {
+    "moneyGuardrail": "All amounts are derived by deterministic Python code using integer paise. The reminder generator is allowed to word messages only.",
+    "demoMode": "Local JSON seed data is the default so the assessment demo does not depend on cloud connectivity."
+  }
+}

@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /finance_runs/{runId} {
+      allow create: if request.resource.data.status == 'PENDING';
+      allow read: if true;
+      allow update: if false;
+    }
+
+    match /finance_runs/{runId}/{subcollection}/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+

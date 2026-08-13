@@ -1,0 +1,19 @@
+[
+  {
+    "concessionId": "C001",
+    "studentId": "S001",
+    "type": "sibling_discount",
+    "amountPaise": 500000,
+    "approvedBy": "Principal",
+    "approvedAt": "2026-06-01"
+  },
+  {
+    "concessionId": "C002",
+    "studentId": "S002",
+    "type": "scholarship",
+    "amountPaise": 700000,
+    "approvedBy": "Trust Office",
+    "approvedAt": "2026-07-01"
+  }
+]
+

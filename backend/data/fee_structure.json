@@ -1,0 +1,67 @@
+[
+  {
+    "feeItemId": "F001",
+    "studentId": "S001",
+    "feeHead": "tuition",
+    "term": "Term 1",
+    "amountPaise": 2500000,
+    "dueDate": "2026-06-15"
+  },
+  {
+    "feeItemId": "F002",
+    "studentId": "S001",
+    "feeHead": "transport",
+    "term": "Term 1",
+    "amountPaise": 800000,
+    "dueDate": "2026-06-15"
+  },
+  {
+    "feeItemId": "F003",
+    "studentId": "S002",
+    "feeHead": "tuition",
+    "term": "Term 1",
+    "amountPaise": 2400000,
+    "dueDate": "2026-07-20"
+  },
+  {
+    "feeItemId": "F004",
+    "studentId": "S002",
+    "feeHead": "lab",
+    "term": "Term 1",
+    "amountPaise": 300000,
+    "dueDate": "2026-07-20"
+  },
+  {
+    "feeItemId": "F005",
+    "studentId": "S003",
+    "feeHead": "tuition",
+    "term": "Term 1",
+    "amountPaise": 2600000,
+    "dueDate": "2026-05-15"
+  },
+  {
+    "feeItemId": "F006",
+    "studentId": "S003",
+    "feeHead": "exam",
+    "term": "Term 1",
+    "amountPaise": 400000,
+    "dueDate": "2026-05-15"
+  },
+  {
+    "feeItemId": "F007",
+    "studentId": "S004",
+    "feeHead": "tuition",
+    "term": "Term 1",
+    "amountPaise": 2200000,
+    "dueDate": "2026-08-25"
+  },
+  {
+    "feeItemId": "F008",
+    "studentId": "S004",
+    "feeHead": "books",
+    "term": "Term 1",
+    "amountPaise": 350000,
+    "dueDate": "2026-08-25"
+  }
+]
+

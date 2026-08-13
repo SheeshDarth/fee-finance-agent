@@ -1,0 +1,13 @@
+backend/.env
+backend/service-account.json
+service-agent.json.json
+*.json.json
+backend/venv/
+backend/__pycache__/
+backend/.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.pyc
+*.log
+

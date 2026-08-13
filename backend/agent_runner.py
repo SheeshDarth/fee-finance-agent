@@ -35,6 +35,13 @@ def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[
     as_of = as_of or date.today()
     data = load_seed_data()
     events = [audit_event("FINANCE_RUN_STARTED", {"asOf": as_of.isoformat()})]
+    for concession in data["concessions"]:
+        events.append(audit_event("CONCESSION_APPROVED", concession, actor=concession.get("approvedBy", "fee-agent-runner")))
+    for waiver in data["waivers"]:
+        events.append(audit_event("WAIVER_APPROVED", waiver, actor=waiver.get("approvedBy", "fee-agent-runner")))
+    for plan in data["payment_plans"]:
+        if plan.get("status") == "APPROVED":
+            events.append(audit_event("PAYMENT_PLAN_APPROVED", plan, actor=plan.get("approvedBy", "fee-agent-runner")))
 
     reconciliation_results = reconcile_payments(
         data["students"], data["fee_items"], data["payments"]

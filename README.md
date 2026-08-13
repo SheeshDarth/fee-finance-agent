@@ -12,6 +12,11 @@ Assessment prototype for Subhanu Technologies. The workflow turns school fee rec
 - LLM monetary safety note: [docs/llm-safety.md](docs/llm-safety.md)
 - Validation record: [docs/validation.md](docs/validation.md)
 - Assessment demonstration script: [docs/demo-script.md](docs/demo-script.md)
+- Complete workflow and process: [docs/workflow-and-process.md](docs/workflow-and-process.md)
+- Diagram set: [docs/diagrams.md](docs/diagrams.md)
+- Deliverables audit: [docs/deliverables-checklist.md](docs/deliverables-checklist.md)
+- Agent framework choice: [docs/agent-framework.md](docs/agent-framework.md)
+- Architecture review: [docs/architecture-review.md](docs/architecture-review.md)
 - Firestore security rules: [firestore.rules](firestore.rules)
 
 ## 1. Create the Project Folder

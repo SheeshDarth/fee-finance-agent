@@ -12,7 +12,7 @@ Validated on 2026-08-13 from the repository root.
 - Repository hygiene: service-account key and environment files remain ignored and untracked.
 - Browser smoke: Vite served HTTP 200; desktop snapshot rendered the dashboard; mobile viewport measured `scrollWidth == clientWidth` at 390px; worklist exposed score and plan-compliance values.
 - Google Cloud: project `test1-457903` authenticated with the service account; Firestore Native Mode database `(default)` in `nam5` accepted a temporary write/read/delete check.
-- Firestore worker: a temporary `PENDING` run transitioned to `AWAITING_REVIEW` and published 4 positions, 5 reconciliation rows, 3 worklist rows, 2 reminder drafts, and 13 audit events; validation data was removed afterward.
+- Firestore worker: a temporary `PENDING` run transitioned to `AWAITING_REVIEW` and published 4 positions, 5 reconciliation rows, 3 worklist rows, 2 reminder drafts, and 17 audit events; validation data was removed afterward.
 - Firebase: project registration and the FeeOps Web App are complete; Firestore rules deployed successfully. Authentication initialization is blocked by `BILLING_NOT_ENABLED`.
 - Vertex AI: the SDK call is wired and attempted; Gemini is blocked by the same `BILLING_NOT_ENABLED` response and the deterministic fallback passed validation.
 

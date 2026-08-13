@@ -814,15 +814,88 @@
     {
       "eventType": "FINANCE_RUN_STARTED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "asOf": "2026-08-13"
       }
     },
     {
+      "eventType": "CONCESSION_APPROVED",
+      "actor": "Principal",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
+      "details": {
+        "concessionId": "C001",
+        "studentId": "S001",
+        "type": "sibling_discount",
+        "amountPaise": 500000,
+        "approvedBy": "Principal",
+        "approvedAt": "2026-06-01"
+      }
+    },
+    {
+      "eventType": "CONCESSION_APPROVED",
+      "actor": "Trust Office",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
+      "details": {
+        "concessionId": "C002",
+        "studentId": "S002",
+        "type": "scholarship",
+        "amountPaise": 700000,
+        "approvedBy": "Trust Office",
+        "approvedAt": "2026-07-01"
+      }
+    },
+    {
+      "eventType": "WAIVER_APPROVED",
+      "actor": "Principal",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
+      "details": {
+        "waiverId": "W001",
+        "studentId": "S003",
+        "amountPaise": 200000,
+        "reason": "Lab breakage fee waived after review",
+        "approvedBy": "Principal",
+        "approvedAt": "2026-07-12"
+      }
+    },
+    {
+      "eventType": "PAYMENT_PLAN_APPROVED",
+      "actor": "Accounts Head",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
+      "details": {
+        "planId": "PP001",
+        "studentId": "S003",
+        "status": "APPROVED",
+        "approvedBy": "Accounts Head",
+        "approvedAt": "2026-07-10",
+        "notes": "Family approved to clear pending amount in two instalments.",
+        "totalAmountPaise": 2800000,
+        "installments": [
+          {
+            "installmentId": "PP001-I1",
+            "dueDate": "2026-08-05",
+            "amountPaise": 1400000,
+            "paidPaise": 0,
+            "status": "PENDING",
+            "paymentIds": [
+              "P003"
+            ]
+          },
+          {
+            "installmentId": "PP001-I2",
+            "dueDate": "2026-09-05",
+            "amountPaise": 1400000,
+            "paidPaise": 0,
+            "status": "PENDING",
+            "paymentIds": []
+          }
+        ]
+      }
+    },
+    {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "paymentId": "P001",
         "amountPaise": 1500000,
@@ -838,7 +911,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "paymentId": "P002",
         "amountPaise": 1500000,
@@ -854,7 +927,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "paymentId": "P003",
         "amountPaise": 1000000,
@@ -870,7 +943,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "paymentId": "P004",
         "amountPaise": 900000,
@@ -886,7 +959,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.005251+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "paymentId": "P005",
         "amountPaise": 2550000,
@@ -902,7 +975,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S001",
         "outstandingPaise": 3170000,
@@ -927,7 +1000,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S002",
         "outstandingPaise": 528500,
@@ -951,7 +1024,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S003",
         "outstandingPaise": 2885000,
@@ -977,7 +1050,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S004",
         "outstandingPaise": 0,
@@ -999,7 +1072,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S001",
         "status": "DRAFT_FOR_REVIEW",
@@ -1009,7 +1082,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentId": "S002",
         "status": "DRAFT_FOR_REVIEW",
@@ -1019,7 +1092,7 @@
     {
       "eventType": "FINANCE_RUN_COMPLETED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T08:47:23.010379+00:00",
+      "timestamp": "2026-08-13T08:55:42.611972+00:00",
       "details": {
         "studentCount": 4,
         "reconciliationCount": 5,

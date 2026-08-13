@@ -26,6 +26,18 @@ Ageing buckets: \`0-30\` Rs. 5,285, \`31-60\` Rs. 13,700, \`60+\` Rs. 28,850, an
 | P004 | Rs. 9,000 | NEEDS_REVIEW, unmatched | Cash narration has no student, invoice, or reliable identity. It is excluded from the ledger. |
 | P005 | Rs. 25,500 | CONFIDENT, S004 | Known student ID in payment. |
 
+## Approval Audit Evidence
+
+The generated audit trail records the authority behind non-payment adjustments and plans:
+
+| Event | Record | Approver |
+| --- | --- | --- |
+| CONCESSION_APPROVED | C001 sibling discount, C002 scholarship | Principal; Trust Office |
+| WAIVER_APPROVED | W001 lab breakage fee waiver | Principal |
+| PAYMENT_PLAN_APPROVED | PP001 two-installment plan | Accounts Head |
+
+Reminder creation, reconciliation decisions, student positions, and run completion are also emitted as timestamped audit events.
+
 ## Collection Worklist
 
 The score is explainable: overdue amount in thousands + ageing weight + late-history weight + partial-history weight + missed-history weight + capped average delay weight. Approved plans suppress contact even when the plan is overdue.
@@ -47,4 +59,3 @@ The prototype produces two ageing buckets and keeps both as drafts.
 **0-30 days, polite:**
 
 > Dear Ms. Kavita Iyer, this is a polite reminder for Meera Iyer's school fee balance of Rs. 5,285. The instalment was due on 2026-07-20 and is now 24 days overdue. Please treat this as a draft notice for accounts-office review before any parent communication is sent.
-

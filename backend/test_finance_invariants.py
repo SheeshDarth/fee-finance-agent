@@ -4,6 +4,7 @@ from datetime import date
 from ledger import calculate_positions
 from ledger import build_worklist
 from llm_drafter import validate_draft
+from agent_runner import build_finance_run
 from reconciliation import reconcile_payments
 from seed_data import load_seed_data
 
@@ -91,6 +92,13 @@ class FinanceInvariantTests(unittest.TestCase):
         aarav = next(row for row in positions if row["studentId"] == "S001")
         valid, _ = validate_draft(f"Balance Rs. 99,999 due {aarav['reminderDueDate']}", aarav)
         self.assertFalse(valid)
+
+    def test_audit_records_approval_authority(self):
+        payload = build_finance_run(date(2026, 8, 13), use_llm=False)
+        event_types = {event["eventType"] for event in payload["auditEvents"]}
+        self.assertTrue({"CONCESSION_APPROVED", "WAIVER_APPROVED", "PAYMENT_PLAN_APPROVED"}.issubset(event_types))
+        plan_event = next(event for event in payload["auditEvents"] if event["eventType"] == "PAYMENT_PLAN_APPROVED")
+        self.assertEqual(plan_event["actor"], "Accounts Head")
 
 
 if __name__ == "__main__":

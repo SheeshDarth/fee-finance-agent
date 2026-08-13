@@ -1,5 +1,7 @@
 # Architecture
 
+The complete architecture, data relationship, run-state, and agent-boundary diagrams are in [docs/diagrams.md](docs/diagrams.md). The Mermaid overview below is the primary system view.
+
 \`\`\`mermaid
 flowchart TD
   A["JSON source records"] --> B["Python finance runner"]
@@ -45,4 +47,3 @@ INGEST_DATA
 - Gemini can word a reminder but cannot calculate or supply monetary truth. Amount and due date validation is mandatory.
 - Firebase Authentication and Firestore rules protect reviewer reads, live-run creation, and review-action writes. The worker uses server credentials for backend processing.
 - Local JSON remains the reproducible assessment path. Firestore is the live projection path when configured.
-

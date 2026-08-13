@@ -117,6 +117,10 @@ python firestore_worker.py --once
 
 Remove \`--once\` for the polling worker. In the configured frontend, sign in as an active reviewer and select \`Run live workflow\`. The app subscribes to the run document plus \`student_positions\`, \`reconciliation_results\`, \`collection_worklist\`, \`reminder_drafts\`, and \`audit_events\`. Review actions are stored under \`finance_runs/{runId}/review_actions\`; the worker marks them applied and adds an audit event.
 
+The Firebase project and web app are registered as \`test1-457903\`, and \`firestore.rules\` has been deployed. Firebase Authentication and Vertex AI still require billing to be enabled on the Google project; Google returns \`BILLING_NOT_ENABLED\` for both services until a billing account is linked. This is the only remaining console-side prerequisite before reviewer sign-in and live Gemini wording can succeed.
+
+To clear that prerequisite, link a billing account at https://console.cloud.google.com/billing/linkedaccount?project=test1-457903, then initialize Authentication and enable Email/Password in Firebase Console > Authentication > Sign-in method. Create a reviewer account and add its UID under \`reviewers/{uid}\` with \`active: true\`. Re-run \`python firestore_worker.py --once\` and the live dashboard flow can be demonstrated.
+
 ## Money and Review Guardrails
 
 - Every monetary calculation uses integer paise in Python.

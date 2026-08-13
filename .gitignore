@@ -8,6 +8,7 @@ backend/.pytest_cache/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/.env
+backend/.gcloud-config/
 *.pyc
 *.log
-

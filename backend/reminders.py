@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import re
 from typing import Any
+
+from llm_drafter import draft_with_gemini, validate_draft
 
 
 TONE_BY_BUCKET = {
@@ -15,28 +16,32 @@ def _template_message(position: dict[str, Any]) -> str:
     tone = TONE_BY_BUCKET.get(position["ageingBucket"], "polite reminder")
     return (
         f"Dear {position['guardianName']}, this is a {tone} for {position['studentName']}'s "
-        f"school fee balance of {position['outstanding']}. The amount has been pending since "
-        f"the due date connected to the current instalment and is now {position['daysOverdue']} "
-        "days overdue. Please treat this as a draft notice for accounts-office review before any "
-        "parent communication is sent."
+        f"school fee balance of {position['reminderAmount']}. The instalment was due on "
+        f"{position['reminderDueDate']} and is now {position['daysOverdue']} days overdue. "
+        "Please treat this as a draft notice for accounts-office review before any parent "
+        "communication is sent."
     )
 
 
-def _validate_message(message: str, allowed_amounts: set[str]) -> tuple[bool, str]:
-    mentioned_amounts = set(re.findall(r"Rs\. [0-9,]+", message))
-    unknown = mentioned_amounts - allowed_amounts
-    if unknown:
-        return False, f"Message contains unknown amount(s): {sorted(unknown)}"
-    return True, "All monetary figures match deterministic ledger values."
-
-
-def draft_reminders(positions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def draft_reminders(positions: list[dict[str, Any]], use_llm: bool = False) -> list[dict[str, Any]]:
     drafts = []
     for position in positions:
         if not position["shouldDraftReminder"]:
             continue
-        message = _template_message(position)
-        is_valid, validation_note = _validate_message(message, {position["outstanding"]})
+        generation_source = "DETERMINISTIC_TEMPLATE"
+        model = None
+        try:
+            generated = draft_with_gemini(position) if use_llm else None
+            message = generated["message"] if generated else _template_message(position)
+            model = "Gemini" if generated else None
+            generation_source = "GEMINI" if generated else generation_source
+        except Exception as error:
+            message = _template_message(position)
+            validation_note = f"Gemini unavailable; deterministic fallback used ({error})."
+            generation_source = "DETERMINISTIC_FALLBACK"
+        is_valid, validation_note = validate_draft(message, position)
+        if is_valid and generation_source != "GEMINI":
+            validation_note = "Deterministic template passed amount and due-date validation."
         drafts.append({
             "studentId": position["studentId"],
             "studentName": position["studentName"],
@@ -45,9 +50,12 @@ def draft_reminders(positions: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "tone": TONE_BY_BUCKET.get(position["ageingBucket"], "polite reminder"),
             "status": "DRAFT_FOR_REVIEW",
             "message": message,
-            "llmGuardrail": "Amounts are supplied from ledger output; generated text is rejected if it contains unknown currency values.",
+            "generationSource": generation_source,
+            "model": model,
+            "dueDate": position["reminderDueDate"],
+            "amount": position["reminderAmount"],
+            "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",
             "validationPassed": is_valid,
             "validationNote": validation_note,
         })
     return drafts
-

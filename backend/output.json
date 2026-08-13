@@ -789,7 +789,7 @@
       "amount": "Rs. 13,700",
       "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",
       "validationPassed": true,
-      "validationNote": "Gemini wording passed deterministic amount and due-date validation."
+      "validationNote": "Deterministic template passed amount and due-date validation."
     },
     {
       "studentId": "S002",
@@ -805,14 +805,14 @@
       "amount": "Rs. 5,285",
       "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",
       "validationPassed": true,
-      "validationNote": "Gemini wording passed deterministic amount and due-date validation."
+      "validationNote": "Deterministic template passed amount and due-date validation."
     }
   ],
   "auditEvents": [
     {
       "eventType": "FINANCE_RUN_STARTED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "asOf": "2026-08-13"
       }
@@ -820,7 +820,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "paymentId": "P001",
         "amountPaise": 1500000,
@@ -836,7 +836,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "paymentId": "P002",
         "amountPaise": 1500000,
@@ -852,7 +852,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "paymentId": "P003",
         "amountPaise": 1000000,
@@ -868,7 +868,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "paymentId": "P004",
         "amountPaise": 900000,
@@ -884,7 +884,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.338388+00:00",
       "details": {
         "paymentId": "P005",
         "amountPaise": 2550000,
@@ -900,7 +900,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S001",
         "outstandingPaise": 3170000,
@@ -925,7 +925,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S002",
         "outstandingPaise": 528500,
@@ -949,7 +949,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S003",
         "outstandingPaise": 2885000,
@@ -975,7 +975,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S004",
         "outstandingPaise": 0,
@@ -997,7 +997,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S001",
         "status": "DRAFT_FOR_REVIEW",
@@ -1007,7 +1007,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentId": "S002",
         "status": "DRAFT_FOR_REVIEW",
@@ -1017,7 +1017,7 @@
     {
       "eventType": "FINANCE_RUN_COMPLETED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T07:57:23.660050+00:00",
+      "timestamp": "2026-08-13T08:07:36.340430+00:00",
       "details": {
         "studentCount": 4,
         "reconciliationCount": 5,

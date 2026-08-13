@@ -31,7 +31,7 @@ def audit_event(event_type: str, details: dict[str, Any], actor: str = "fee-agen
     }
 
 
-def build_finance_run(as_of: date | None = None) -> dict[str, Any]:
+def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[str, Any]:
     as_of = as_of or date.today()
     data = load_seed_data()
     events = [audit_event("FINANCE_RUN_STARTED", {"asOf": as_of.isoformat()})]
@@ -52,6 +52,7 @@ def build_finance_run(as_of: date | None = None) -> dict[str, Any]:
         waivers=data["waivers"],
         payments=data["payments"],
         payment_plans=data["payment_plans"],
+        payment_history=data["payment_history"],
         reconciliation_results=reconciliation_results,
         as_of=as_of,
     )
@@ -63,7 +64,7 @@ def build_finance_run(as_of: date | None = None) -> dict[str, Any]:
         }))
 
     worklist = build_worklist(positions)
-    reminder_drafts = draft_reminders(positions)
+    reminder_drafts = draft_reminders(positions, use_llm=use_llm)
     for draft in reminder_drafts:
         events.append(audit_event("REMINDER_DRAFT_CREATED", {
             "studentId": draft["studentId"],
@@ -89,6 +90,7 @@ def build_finance_run(as_of: date | None = None) -> dict[str, Any]:
         "notes": {
             "moneyGuardrail": "All amounts are derived by deterministic Python code using integer paise. The reminder generator is allowed to word messages only.",
             "demoMode": "Local JSON seed data is the default so the assessment demo does not depend on cloud connectivity.",
+            "llmMode": "Gemini is optional; when enabled it can word reminders only, and deterministic validation rejects changed amounts or due dates.",
         },
     }
 
@@ -124,12 +126,15 @@ def maybe_write_firestore(payload: dict[str, Any]) -> None:
 
 
 def main() -> None:
+    load_dotenv(BASE_DIR / ".env")
     parser = argparse.ArgumentParser(description="Run the Fee Collection & Finance Agent demo.")
     parser.add_argument("--as-of", default="2026-08-13", help="Assessment date in YYYY-MM-DD format.")
     parser.add_argument("--firestore", action="store_true", help="Also write output to Firestore using backend/.env.")
+    parser.add_argument("--llm", action="store_true", help="Use Vertex AI Gemini for reminder wording, with deterministic fallback and validation.")
     args = parser.parse_args()
 
-    payload = build_finance_run(datetime.strptime(args.as_of, "%Y-%m-%d").date())
+    use_llm = args.llm or os.getenv("ENABLE_LLM", "false").lower() == "true"
+    payload = build_finance_run(datetime.strptime(args.as_of, "%Y-%m-%d").date(), use_llm=use_llm)
     output_path = write_output(payload)
     frontend_demo_path = BASE_DIR.parent / "frontend" / "src" / "demo-output.json"
     if frontend_demo_path.parent.exists():

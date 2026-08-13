@@ -1,53 +1,48 @@
 # Architecture
 
-```text
-Local JSON inputs
-  |
-  | Python batch run (default demo path)
-  v
-Fee finance runner
-  |
-  | deterministic code only
-  v
-Ledger + reconciliation engine
-  |
-  | exact integer-paise values
-  v
-Worklist + template reminder drafter
-  |
-  | review-only wording; amounts validated
-  v
-Generated output.json + audit trail
-  |
-  | React reads frontend/src/demo-output.json
-  v
-Accounts-office dashboard
+\`\`\`mermaid
+flowchart TD
+  A["JSON source records"] --> B["Python finance runner"]
+  B --> C["Reconciliation and confidence gate"]
+  C --> D["Integer-paise ledger"]
+  D --> E["Late fees, concessions, waivers, FIFO allocation"]
+  E --> F["Plan compliance and history-based worklist"]
+  F --> G["Gemini wording only, deterministic validation"]
+  G --> H["Audit events and generated run"]
+  H --> I["Local JSON snapshot"]
+  H --> J["Firestore finance_runs"]
+  J --> K["Firestore worker"]
+  J --> L["React live subscriptions"]
+  L --> M["Authenticated reviewer actions"]
+  M --> J
+\`\`\`
 
-Optional path: `python agent_runner.py --firestore` writes the generated run and
-child collections to Firestore. It is a one-shot writer in this prototype; the
-React app does not yet listen to Firestore in real time.
-```
+## Runtime Workflow
 
-## Design Rationale
-
-- The Python backend owns all financial calculations.
-- Currency is stored as integer paise to avoid floating-point errors.
-- Reconciliation is rule-based with confidence levels and reasons.
-- Ambiguous payments are not applied to verified collections; they are marked for human review.
-- Reminder drafting is deterministic templating in this prototype. It can word a message, but it cannot compute or invent amounts.
-- Audit events make every recommendation traceable.
-- Fee-item FIFO allocation keeps ageing and fee-head totals tied to individual billing items.
-- Firestore is an optional persistence path, not the default live state broker.
-
-## Workflow
-
-```text
+\`\`\`text
 INGEST_DATA
   -> RECONCILE_PAYMENTS
-  -> CALCULATE_LEDGER
-  -> BUILD_DASHBOARD_METRICS
-  -> RANK_COLLECTION_WORKLIST
+  -> HOLD_POSSIBLE_AND_UNMATCHED_FOR_REVIEW
+  -> CALCULATE_LATE_FEES
+  -> APPLY_CONCESSIONS_AND_WAIVERS
+  -> APPLY_CONFIDENT_PAYMENTS_FIFO
+  -> CALCULATE_PLAN_COMPLIANCE
+  -> SCORE_COLLECTION_WORKLIST_WITH_HISTORY
   -> DRAFT_REMINDERS
+  -> VALIDATE_LLM_AMOUNT_AND_DUE_DATE
   -> WRITE_AUDIT_EVENTS
-  -> COMPLETE
-```
+  -> PUBLISH_LOCAL_OR_FIRESTORE_RUN
+\`\`\`
+
+## Boundaries
+
+- Python owns every financial calculation and uses integer paise.
+- Reconciliation produces \`CONFIDENT\`, \`POSSIBLE\`, or \`NEEDS_REVIEW\`; only \`CONFIDENT\` reduces verified collections.
+- Fee-item FIFO allocation keeps ageing and fee-head totals tied to source records.
+- Late fees are derived from fee-item policies with grace days, fixed charges, daily charges, and caps.
+- Payment plans contain an explicit installment schedule; compliance uses verified payment IDs and does not treat a pending match as paid.
+- Historical payment behavior is joined only for explainable prioritization; it does not change the ledger balance.
+- Gemini can word a reminder but cannot calculate or supply monetary truth. Amount and due date validation is mandatory.
+- Firebase Authentication and Firestore rules protect reviewer reads, live-run creation, and review-action writes. The worker uses server credentials for backend processing.
+- Local JSON remains the reproducible assessment path. Firestore is the live projection path when configured.
+

@@ -1,138 +1,131 @@
-# Fee Collection & Finance Agent
+# Fee Collection and Finance Agent
 
-This is a 3-hour assessment prototype for Subhanu Technologies. It converts messy school fee data into an auditable dashboard, reconciliation review list, collection worklist, and review-only reminder drafts.
+Assessment prototype for Subhanu Technologies. The workflow turns school fee records into a traceable ledger, reconciliation queue, collection worklist, review-only reminders, and an optional live Firebase dashboard.
 
-## What Works
+## Deliverables
 
-- Loads sample students, fee heads, concessions, waivers, payment plans, and payments from JSON.
-- Reconciles payments using deterministic rules.
-- Flags ambiguous payments for human review.
-- Calculates net due, collected, outstanding, overdue, ageing buckets, class totals, fee-head totals, and payment mode totals.
-- Ranks families for collection follow-up with plain-English reasons.
-- Drafts reminder messages for review only.
-- Validates that reminder amounts match ledger amounts.
-- Writes an audit trail for every important step.
-- Includes a React dashboard that reads the generated backend output.
-- Includes an optional one-shot Firestore writer; the default demo remains local and deterministic.
-- The dashboard makes verified collections, pending review money, fee-head exposure, class totals, ageing, worklist, drafts, and audit evidence visible.
+- Working source code in a public Git repository: [SheeshDarth/fee-finance-agent](https://github.com/SheeshDarth/fee-finance-agent)
+- Setup and run process: this README, including Google Cloud SDK, backend, frontend, Gemini, and Firestore worker steps.
+- Architecture diagram: [architecture.md](architecture.md)
+- Data model and rationale: [docs/data-model.md](docs/data-model.md)
+- Sample dashboard, reconciliation, worklist, and reminders: [docs/assessment-evidence.md](docs/assessment-evidence.md)
+- LLM monetary safety note: [docs/llm-safety.md](docs/llm-safety.md)
+- Firestore security rules: [firestore.rules](firestore.rules)
 
-## Current Demo Snapshot
+## 1. Create the Project Folder
 
-After running `python agent_runner.py` on August 13, 2026:
+The project can live anywhere owned by the developer. This copy is at:
 
-- Verified collected: `Rs. 55,500`
-- Total outstanding: `Rs. 46,000`
-- Total overdue: `Rs. 46,000`
-- Pending human review: `Rs. 19,000` across `P003`, `P004` (excluded from the official ledger)
-- Payments needing human review: `P003`, `P004`
-- Reminder drafts generated: `2`
-- Audit events generated: `13`
-- Local dashboard URL after `npm run dev`: `http://127.0.0.1:5173`
+\`\`\`text
+C:\Users\Siddharth\Desktop\Subhanu\FDE AGENT
+\`\`\`
 
-## Setup Already Done
+Codex is used to edit, test, document, and commit the project. The Google Cloud SDK is used for Google authentication, enabling services, and optional cloud execution. They are complementary tools.
 
-Google Cloud SDK is installed, and the service account JSON was downloaded as:
+The downloaded service-account key must stay outside Git. This repository ignores \`backend/.env\`, \`backend/service-account.json\`, and \`service-agent.json.json\`. Never paste the key into source code or commit it.
 
-```text
-service-agent.json.json
-```
+## 2. Google Cloud SDK and Firebase Setup
 
-The JSON key is intentionally ignored by Git. For backend use, copy or rename it to:
+Run PowerShell from the repository root:
 
-```text
-backend/service-account.json
-```
-
-## Google Cloud Commands
-
-```bash
+\`\`\`powershell
 gcloud auth login
 gcloud auth application-default login
 gcloud config set project test1-457903
-gcloud services enable aiplatform.googleapis.com firestore.googleapis.com
-```
+gcloud services enable aiplatform.googleapis.com firestore.googleapis.com firebase.googleapis.com
+\`\`\`
 
-Firestore should be created in Native Mode.
+Create Firestore in Native Mode in the Firebase or Google Cloud console. Enable Firebase Authentication with Email/Password. Create at least one reviewer user, then create a Firestore document:
 
-## Backend Setup
+\`\`\`text
+reviewers/{reviewerUid}
+active: true
+\`\`\`
 
-```bash
+Copy the downloaded key to \`backend/service-account.json\` only if using service-account authentication. Then:
+
+\`\`\`powershell
 cd backend
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-pip install google-cloud-firestore google-genai python-dotenv
+pip install -r requirements.txt
 copy .env.example .env
-python agent_runner.py
-```
+\`\`\`
 
-The local run writes:
+Edit \`backend/.env\`:
 
-```text
-backend/output.json
-```
+\`\`\`text
+GOOGLE_APPLICATION_CREDENTIALS="service-account.json"
+GCP_PROJECT_ID="test1-457903"
+GCP_LOCATION="us-central1"
+ENABLE_LLM="false"
+GEMINI_MODEL="gemini-2.5-flash"
+\`\`\`
 
-Optional Firestore write:
+For Firebase web configuration, copy \`frontend/.env.example\` to \`frontend/.env\` and fill the values from Firebase Console > Project settings > Your apps. The frontend remains a local demo until all values exist and a signed-in reviewer is available.
 
-```bash
-python agent_runner.py --firestore
-```
+## 3. Run the Deterministic Assessment Workflow
 
-Only run Firestore mode after `backend/.env` points to the service account JSON.
+\`\`\`powershell
+cd backend
+.\venv\Scripts\Activate.ps1
+python agent_runner.py --as-of 2026-08-13
+\`\`\`
 
-## Frontend Setup
+This writes \`backend/output.json\` and \`frontend/src/demo-output.json\`. The run order is:
 
-```bash
-cd frontend
+\`\`\`text
+load JSON -> reconcile payments -> calculate late fees and ledger ->
+calculate plan compliance -> rank worklist using history ->
+draft and validate reminders -> write audit events -> publish output
+\`\`\`
+
+Run tests and build the UI:
+
+\`\`\`powershell
+python -m unittest discover -s backend -p 'test_*.py' -v
+cd ..\frontend
 npm install
+npm run build
 npm run dev
-```
+\`\`\`
 
-Open the Vite URL shown in the terminal.
+Open the Vite URL, normally \`http://127.0.0.1:5173\`. The default UI is an honest local snapshot. It does not pretend that local JSON is live Firebase data.
 
-## Data Model
+## 4. Live Gemini Drafting
 
-Core records:
+Gemini is optional and must be explicitly enabled after Vertex AI access is configured:
 
-- `students`
-- `fee_structure`
-- `concessions`
-- `waivers`
-- `payments`
-- `payment_plans`
-- generated `studentPositions`
-- generated `reconciliationResults`
-- generated `collectionWorklist`
-- generated `reminderDrafts`
-- generated `auditEvents`
+\`\`\`powershell
+cd backend
+python agent_runner.py --as-of 2026-08-13 --llm
+\`\`\`
 
-All money is represented as integer paise, then formatted for display.
+\`backend/llm_drafter.py\` uses the Google Gen AI SDK through Vertex AI. Gemini receives the deterministic facts and returns wording only. \`validate_draft\` requires the exact ledger amount and exact due date; unknown currency values or changed dates fail validation. If the call or parse fails, the deterministic reminder template is used and the output records the fallback source.
 
-## Reconciliation Rules
+## 5. Firestore Worker and Live Dashboard
 
-1. Exact invoice reference or known student ID maps confidently when the payment is internally consistent.
-2. Narration overlap with student or guardian name becomes a possible match.
-3. Missing or vague data becomes `NEEDS_REVIEW`.
-4. `POSSIBLE` and `NEEDS_REVIEW` payments remain pending and do not reduce verified collections or outstanding balances.
+The worker is the server-side path. It consumes \`finance_runs\` documents with status \`PENDING\`, runs the same backend workflow, writes child collections, and transitions the run to \`AWAITING_REVIEW\`, \`COMPLETE\`, or \`FAILED\`.
 
-The sample data includes ambiguous payments so the evaluator can see human-review behavior.
+\`\`\`powershell
+cd backend
+.\venv\Scripts\Activate.ps1
+python firestore_worker.py --once
+\`\`\`
 
-## Money Safety And Drafting Boundary
+Remove \`--once\` for the polling worker. In the configured frontend, sign in as an active reviewer and select \`Run live workflow\`. The app subscribes to the run document plus \`student_positions\`, \`reconciliation_results\`, \`collection_worklist\`, \`reminder_drafts\`, and \`audit_events\`. Review actions are stored under \`finance_runs/{runId}/review_actions\`; the worker marks them applied and adds an audit event.
 
-There is no live LLM call in this constrained prototype. Reminder drafting uses deterministic templates with exact ledger values, then validates the text against those values. The backend computes every amount using integer paise; unknown or invented currency values fail validation. This is intentionally safer and easier to demonstrate than adding a model call without a reliable review workflow.
+## Money and Review Guardrails
 
-## Assumptions
+- Every monetary calculation uses integer paise in Python.
+- Late fees come from explicit policy metadata, grace days, daily rates, fixed charges, and caps.
+- Only confident, non-review payments reduce verified collections and outstanding balances.
+- Possible or unmatched payments remain visible as human-review items.
+- Payment-plan schedules are displayed and their compliance is calculated from verified payments, not pending matches.
+- Gemini cannot author ledger amounts, late fees, balances, due dates, or payment matches.
+- Reminder drafts are never sent automatically.
 
-- Sample JSON represents school records for the prototype.
-- The local JSON run and generated `frontend/src/demo-output.json` are the default demo path.
-- Firestore mode is an optional one-shot persistence path, not a live listener or production backend.
-- Reminder messages are drafts only and are never sent.
-- Ambiguous payments require accounts-office confirmation before they affect the verified ledger.
+## Assumptions and Limitations
 
-## Limitations And Next Steps
+The sample JSON is intentionally small and represents a school fee snapshot. The prototype assumes trusted fee records, a single assessment date, and a reviewer who can approve ambiguous records. It does not yet include bank-statement ingestion, CSV/Sheets import, production job scheduling, full role administration, notification delivery, or deployment to Cloud Run or Agent Runtime. The worker records reviewer decisions and audit evidence; a production implementation would also re-run the ledger against an immutable approval event and maintain a complete append-only decision history.
 
-- Add CSV/Google Sheets import.
-- Add authenticated reviewer roles.
-- Add approval screens for reconciliation and reminders.
-- Add Firestore live listeners in React after Firebase web config is complete.
-- Improve payment matching with bank statement parsing and more explainable scoring.
-- Deploy backend to Cloud Run or Agent Runtime after local validation.

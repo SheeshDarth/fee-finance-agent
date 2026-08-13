@@ -1,16 +1,34 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function reviewer() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/reviewers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/reviewers/$(request.auth.uid)).data.active == true;
+    }
+
+    match /reviewers/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
     match /finance_runs/{runId} {
-      allow create: if request.resource.data.status == 'PENDING';
-      allow read: if true;
+      allow create: if reviewer() && request.resource.data.status == 'PENDING';
+      allow read: if reviewer();
       allow update: if false;
     }
 
     match /finance_runs/{runId}/{subcollection}/{docId} {
-      allow read: if true;
-      allow write: if false;
+      allow read: if reviewer();
+      allow create: if reviewer()
+        && subcollection == 'review_actions'
+        && request.resource.data.reviewerUid == request.auth.uid
+        && request.resource.data.status == 'PENDING';
+      allow update, delete: if false;
     }
   }
 }
-

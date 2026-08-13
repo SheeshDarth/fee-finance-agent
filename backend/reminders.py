@@ -30,6 +30,7 @@ def draft_reminders(positions: list[dict[str, Any]], use_llm: bool = False) -> l
             continue
         generation_source = "DETERMINISTIC_TEMPLATE"
         model = None
+        generation_error = None
         try:
             generated = draft_with_gemini(position) if use_llm else None
             message = generated["message"] if generated else _template_message(position)
@@ -37,7 +38,7 @@ def draft_reminders(positions: list[dict[str, Any]], use_llm: bool = False) -> l
             generation_source = "GEMINI" if generated else generation_source
         except Exception as error:
             message = _template_message(position)
-            validation_note = f"Gemini unavailable; deterministic fallback used ({error})."
+            generation_error = str(error)
             generation_source = "DETERMINISTIC_FALLBACK"
         is_valid, validation_note = validate_draft(message, position)
         if is_valid and generation_source != "GEMINI":
@@ -52,6 +53,7 @@ def draft_reminders(positions: list[dict[str, Any]], use_llm: bool = False) -> l
             "message": message,
             "generationSource": generation_source,
             "model": model,
+            "generationError": generation_error,
             "dueDate": position["reminderDueDate"],
             "amount": position["reminderAmount"],
             "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",

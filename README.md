@@ -10,6 +10,7 @@ Assessment prototype for Subhanu Technologies. The workflow turns school fee rec
 - Data model and rationale: [docs/data-model.md](docs/data-model.md)
 - Sample dashboard, reconciliation, worklist, and reminders: [docs/assessment-evidence.md](docs/assessment-evidence.md)
 - LLM monetary safety note: [docs/llm-safety.md](docs/llm-safety.md)
+- Validation record: [docs/validation.md](docs/validation.md)
 - Firestore security rules: [firestore.rules](firestore.rules)
 
 ## 1. Create the Project Folder
@@ -128,4 +129,3 @@ Remove \`--once\` for the polling worker. In the configured frontend, sign in as
 ## Assumptions and Limitations
 
 The sample JSON is intentionally small and represents a school fee snapshot. The prototype assumes trusted fee records, a single assessment date, and a reviewer who can approve ambiguous records. It does not yet include bank-statement ingestion, CSV/Sheets import, production job scheduling, full role administration, notification delivery, or deployment to Cloud Run or Agent Runtime. The worker records reviewer decisions and audit evidence; a production implementation would also re-run the ledger against an immutable approval event and maintain a complete append-only decision history.
-

@@ -3,6 +3,7 @@ from datetime import date
 
 from ledger import calculate_positions
 from ledger import build_worklist
+from llm_drafter import validate_draft
 from reconciliation import reconcile_payments
 from seed_data import load_seed_data
 
@@ -78,6 +79,18 @@ class FinanceInvariantTests(unittest.TestCase):
         kabir = next(row for row in build_worklist(positions) if row["studentId"] == "S003")
         self.assertGreater(kabir["scoreBreakdown"]["missedHistory"], 0)
         self.assertIn("missed", kabir["reason"])
+
+    def test_reminder_validator_rejects_changed_money(self):
+        positions, _ = calculate_positions(
+            students=self.data["students"], fee_items=self.data["fee_items"],
+            concessions=self.data["concessions"], waivers=self.data["waivers"],
+            payments=self.data["payments"], payment_plans=self.data["payment_plans"],
+            payment_history=self.data["payment_history"],
+            reconciliation_results=self.reconciliation, as_of=date(2026, 8, 13),
+        )
+        aarav = next(row for row in positions if row["studentId"] == "S001")
+        valid, _ = validate_draft(f"Balance Rs. 99,999 due {aarav['reminderDueDate']}", aarav)
+        self.assertFalse(valid)
 
 
 if __name__ == "__main__":

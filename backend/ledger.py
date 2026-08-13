@@ -10,8 +10,9 @@ def parse_date(value: str) -> date:
 
 
 def rupees(amount_paise: int) -> str:
-    rupee_value = amount_paise / 100
-    return f"Rs. {rupee_value:,.0f}"
+    whole_rupees, paise = divmod(amount_paise, 100)
+    suffix = f".{paise:02d}" if paise else ""
+    return f"Rs. {whole_rupees:,}{suffix}"
 
 
 def ageing_bucket(due_date: date, as_of: date, overdue_paise: int) -> str:
@@ -53,7 +54,11 @@ def calculate_positions(
         if plan.get("status") == "APPROVED":
             plans_by_student[plan["studentId"]].append(plan)
     for result in reconciliation_results:
-        if result["confidence"] in {"CONFIDENT", "POSSIBLE"} and result.get("matchedStudentId"):
+        if (
+            result["confidence"] == "CONFIDENT"
+            and not result.get("requiresHumanReview")
+            and result.get("matchedStudentId")
+        ):
             matched_payment_ids_by_student[result["matchedStudentId"]].append(result["paymentId"])
 
     payments_by_id = {payment["paymentId"]: payment for payment in payments}
@@ -75,25 +80,69 @@ def calculate_positions(
     }
 
     for student_id, student in students_by_id.items():
-        student_fees = fees_by_student[student_id]
+        student_fees = sorted(
+            fees_by_student[student_id],
+            key=lambda item: (parse_date(item["dueDate"]), item["feeItemId"]),
+        )
         student_concessions = concessions_by_student[student_id]
         student_waivers = waivers_by_student[student_id]
         matched_ids = matched_payment_ids_by_student[student_id]
         matched_payments = [payments_by_id[payment_id] for payment_id in matched_ids]
+        pending_review_ids = [
+            result["paymentId"]
+            for result in reconciliation_results
+            if result.get("matchedStudentId") == student_id
+            and result.get("requiresHumanReview")
+        ]
 
-        gross_due = sum(item["amountPaise"] for item in student_fees)
+        gross_due = sum(item["amountPaise"] + item.get("lateFeePaise", 0) for item in student_fees)
         concession_total = sum(item["amountPaise"] for item in student_concessions)
         waiver_total = sum(item["amountPaise"] for item in student_waivers)
-        paid_total = sum(item["amountPaise"] for item in matched_payments)
-        net_due = max(gross_due - concession_total - waiver_total, 0)
-        outstanding = max(net_due - paid_total, 0)
-
-        oldest_due_date = min((parse_date(item["dueDate"]) for item in student_fees), default=as_of)
-        is_overdue = oldest_due_date < as_of and outstanding > 0
-        overdue = outstanding if is_overdue else 0
-        bucket = ageing_bucket(oldest_due_date, as_of, overdue)
-        days_overdue = max((as_of - oldest_due_date).days, 0) if is_overdue else 0
         has_payment_plan = bool(plans_by_student[student_id])
+
+        # Allocate student-level adjustments and approved payments FIFO by due date.
+        # This keeps ageing and fee-head totals tied to individual billing items.
+        remaining_adjustment = concession_total + waiver_total
+        remaining_payment = sum(item["amountPaise"] for item in matched_payments)
+        item_positions = []
+        for item in student_fees:
+            line_gross = item["amountPaise"] + item.get("lateFeePaise", 0)
+            item_adjustment = min(line_gross, remaining_adjustment)
+            remaining_adjustment -= item_adjustment
+            line_net = line_gross - item_adjustment
+            item_payment = min(line_net, remaining_payment)
+            remaining_payment -= item_payment
+            item_outstanding = line_net - item_payment
+            item_due_date = parse_date(item["dueDate"])
+            item_overdue = item_outstanding if item_due_date < as_of else 0
+            item_bucket = ageing_bucket(item_due_date, as_of, item_overdue)
+            item_positions.append({
+                "feeItemId": item["feeItemId"],
+                "feeHead": item["feeHead"],
+                "term": item.get("term"),
+                "dueDate": item["dueDate"],
+                "grossDuePaise": line_gross,
+                "adjustmentPaise": item_adjustment,
+                "netDuePaise": line_net,
+                "collectedPaise": item_payment,
+                "outstandingPaise": item_outstanding,
+                "overduePaise": item_overdue,
+                "ageingBucket": item_bucket,
+                "daysOverdue": max((as_of - item_due_date).days, 0) if item_overdue else 0,
+            })
+
+        paid_total = sum(item["collectedPaise"] for item in item_positions)
+        net_due = sum(item["netDuePaise"] for item in item_positions)
+        outstanding = sum(item["outstandingPaise"] for item in item_positions)
+        overdue = sum(item["overduePaise"] for item in item_positions)
+        overdue_items = [item for item in item_positions if item["overduePaise"] > 0]
+        oldest_overdue_days = max((item["daysOverdue"] for item in overdue_items), default=0)
+        bucket = max(
+            (item["ageingBucket"] for item in overdue_items),
+            key=lambda value: {"0-30": 1, "31-60": 2, "60+": 3}.get(value, 0),
+            default="NOT_OVERDUE",
+        )
+        is_overdue = overdue > 0
 
         position = {
             "studentId": student_id,
@@ -115,12 +164,14 @@ def calculate_positions(
             "overduePaise": overdue,
             "overdue": rupees(overdue),
             "ageingBucket": bucket,
-            "daysOverdue": days_overdue,
+            "daysOverdue": oldest_overdue_days,
             "hasApprovedPaymentPlan": has_payment_plan,
             "shouldDraftReminder": outstanding > 0 and not has_payment_plan and is_overdue,
+            "feeItems": item_positions,
             "trace": {
                 "feeItemIds": [item["feeItemId"] for item in student_fees],
                 "paymentIds": matched_ids,
+                "pendingReviewPaymentIds": pending_review_ids,
                 "concessionIds": [item["concessionId"] for item in student_concessions],
                 "waiverIds": [item["waiverId"] for item in student_waivers],
                 "paymentPlanIds": [item["planId"] for item in plans_by_student[student_id]],
@@ -135,7 +186,8 @@ def calculate_positions(
         dashboard["totalCollectedPaise"] += paid_total
         dashboard["totalOutstandingPaise"] += outstanding
         dashboard["totalOverduePaise"] += overdue
-        dashboard["ageingBuckets"][bucket] += overdue
+        for item in item_positions:
+            dashboard["ageingBuckets"][item["ageingBucket"]] += item["outstandingPaise"] if item["ageingBucket"] == "NOT_OVERDUE" else item["overduePaise"]
 
         class_row = dashboard["byClass"].setdefault(
             student["class"], {"netDuePaise": 0, "collectedPaise": 0, "overduePaise": 0}
@@ -144,11 +196,22 @@ def calculate_positions(
         class_row["collectedPaise"] += paid_total
         class_row["overduePaise"] += overdue
 
-        for item in student_fees:
+        for item in item_positions:
             head_row = dashboard["byFeeHead"].setdefault(
-                item["feeHead"], {"grossDuePaise": 0, "count": 0}
+                item["feeHead"], {
+                    "grossDuePaise": 0,
+                    "netDuePaise": 0,
+                    "collectedPaise": 0,
+                    "outstandingPaise": 0,
+                    "overduePaise": 0,
+                    "count": 0,
+                }
             )
-            head_row["grossDuePaise"] += item["amountPaise"]
+            head_row["grossDuePaise"] += item["grossDuePaise"]
+            head_row["netDuePaise"] += item["netDuePaise"]
+            head_row["collectedPaise"] += item["collectedPaise"]
+            head_row["outstandingPaise"] += item["outstandingPaise"]
+            head_row["overduePaise"] += item["overduePaise"]
             head_row["count"] += 1
         for payment in matched_payments:
             dashboard["paymentModeBreakdown"][payment["mode"]] = (
@@ -174,6 +237,17 @@ def calculate_positions(
         row["overdue"] = rupees(row["overduePaise"])
     for row in dashboard["byFeeHead"].values():
         row["grossDue"] = rupees(row["grossDuePaise"])
+        row["netDue"] = rupees(row["netDuePaise"])
+        row["collected"] = rupees(row["collectedPaise"])
+        row["outstanding"] = rupees(row["outstandingPaise"])
+        row["overdue"] = rupees(row["overduePaise"])
+    pending_review_total = sum(
+        result["amountPaise"]
+        for result in reconciliation_results
+        if result.get("requiresHumanReview")
+    )
+    dashboard["pendingReviewPaise"] = pending_review_total
+    dashboard["pendingReview"] = rupees(pending_review_total)
     dashboard["paymentModeBreakdown"] = {
         mode: {"amountPaise": value, "amount": rupees(value)}
         for mode, value in dashboard["paymentModeBreakdown"].items()
@@ -223,4 +297,3 @@ def build_worklist(positions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for index, row in enumerate(rows, start=1):
         row["rank"] = index
     return rows
-

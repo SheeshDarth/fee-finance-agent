@@ -11,6 +11,7 @@ Assessment prototype for Subhanu Technologies. The workflow turns school fee rec
 - Sample dashboard, reconciliation, worklist, and reminders: [docs/assessment-evidence.md](docs/assessment-evidence.md)
 - LLM monetary safety note: [docs/llm-safety.md](docs/llm-safety.md)
 - Validation record: [docs/validation.md](docs/validation.md)
+- Assessment demonstration script: [docs/demo-script.md](docs/demo-script.md)
 - Firestore security rules: [firestore.rules](firestore.rules)
 
 ## 1. Create the Project Folder

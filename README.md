@@ -13,14 +13,17 @@ This is a 3-hour assessment prototype for Subhanu Technologies. It converts mess
 - Validates that reminder amounts match ledger amounts.
 - Writes an audit trail for every important step.
 - Includes a React dashboard that reads the generated backend output.
-- Includes Firestore-ready credentials/config pattern.
+- Includes an optional one-shot Firestore writer; the default demo remains local and deterministic.
+- The dashboard makes verified collections, pending review money, fee-head exposure, class totals, ageing, worklist, drafts, and audit evidence visible.
 
 ## Current Demo Snapshot
 
 After running `python agent_runner.py` on August 13, 2026:
 
-- Total outstanding: `Rs. 36,000`
-- Total overdue: `Rs. 36,000`
+- Verified collected: `Rs. 55,500`
+- Total outstanding: `Rs. 46,000`
+- Total overdue: `Rs. 46,000`
+- Pending human review: `Rs. 19,000` across `P003`, `P004` (excluded from the official ledger)
 - Payments needing human review: `P003`, `P004`
 - Reminder drafts generated: `2`
 - Audit events generated: `13`
@@ -106,23 +109,24 @@ All money is represented as integer paise, then formatted for display.
 
 ## Reconciliation Rules
 
-1. Exact invoice reference maps confidently.
-2. Known student ID maps confidently.
-3. Narration overlap with student or guardian name becomes a possible match.
-4. Missing or vague data becomes `NEEDS_REVIEW`.
+1. Exact invoice reference or known student ID maps confidently when the payment is internally consistent.
+2. Narration overlap with student or guardian name becomes a possible match.
+3. Missing or vague data becomes `NEEDS_REVIEW`.
+4. `POSSIBLE` and `NEEDS_REVIEW` payments remain pending and do not reduce verified collections or outstanding balances.
 
 The sample data includes ambiguous payments so the evaluator can see human-review behavior.
 
-## LLM Money Safety
+## Money Safety And Drafting Boundary
 
-The LLM is not allowed to calculate fee balances. The backend computes every amount deterministically. Reminder drafting receives exact formatted values and validates generated text against those values. Unknown or invented currency values fail validation.
+There is no live LLM call in this constrained prototype. Reminder drafting uses deterministic templates with exact ledger values, then validates the text against those values. The backend computes every amount using integer paise; unknown or invented currency values fail validation. This is intentionally safer and easier to demonstrate than adding a model call without a reliable review workflow.
 
 ## Assumptions
 
 - Sample JSON represents school records for the prototype.
-- Firestore is the intended persistence and live-state broker.
+- The local JSON run and generated `frontend/src/demo-output.json` are the default demo path.
+- Firestore mode is an optional one-shot persistence path, not a live listener or production backend.
 - Reminder messages are drafts only and are never sent.
-- Ambiguous payments require accounts-office confirmation before they affect the official ledger.
+- Ambiguous payments require accounts-office confirmation before they affect the verified ledger.
 
 ## Limitations And Next Steps
 

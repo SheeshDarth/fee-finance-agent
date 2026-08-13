@@ -1,0 +1,67 @@
+[
+  {
+    "historyId": "H001",
+    "studentId": "S001",
+    "feeItemId": "H001-FEE",
+    "dueDate": "2026-03-15",
+    "paidDate": "2026-04-02",
+    "amountPaise": 1200000,
+    "expectedPaise": 1200000,
+    "status": "PAID_LATE",
+    "paymentDate": "2026-04-02",
+    "daysLate": 18,
+    "paymentType": "FULL"
+  },
+  {
+    "historyId": "H002",
+    "studentId": "S001",
+    "feeItemId": "H002-FEE",
+    "dueDate": "2026-01-15",
+    "paidDate": "2026-01-15",
+    "amountPaise": 1200000,
+    "expectedPaise": 1200000,
+    "status": "PAID_ON_TIME",
+    "paymentDate": "2026-01-15",
+    "daysLate": 0,
+    "paymentType": "FULL"
+  },
+  {
+    "historyId": "H003",
+    "studentId": "S002",
+    "feeItemId": "H003-FEE",
+    "dueDate": "2026-03-15",
+    "paidDate": "2026-03-24",
+    "amountPaise": 1500000,
+    "expectedPaise": 2000000,
+    "status": "PARTIAL_LATE",
+    "paymentDate": "2026-03-24",
+    "daysLate": 9,
+    "paymentType": "PARTIAL"
+  },
+  {
+    "historyId": "H004",
+    "studentId": "S003",
+    "feeItemId": "H004-FEE",
+    "dueDate": "2026-03-15",
+    "paidDate": null,
+    "amountPaise": 0,
+    "expectedPaise": 2500000,
+    "status": "MISSED",
+    "paymentDate": null,
+    "daysLate": 60,
+    "paymentType": "MISSED"
+  },
+  {
+    "historyId": "H005",
+    "studentId": "S004",
+    "feeItemId": "H005-FEE",
+    "dueDate": "2026-03-15",
+    "paidDate": "2026-03-10",
+    "amountPaise": 2200000,
+    "expectedPaise": 2200000,
+    "status": "PAID_EARLY",
+    "paymentDate": "2026-03-10",
+    "daysLate": 0,
+    "paymentType": "FULL"
+  }
+]

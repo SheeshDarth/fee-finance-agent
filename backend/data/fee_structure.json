@@ -4,64 +4,98 @@
     "studentId": "S001",
     "feeHead": "tuition",
     "term": "Term 1",
+    "instalmentId": "S001-T1-I1",
+    "instalmentNumber": 1,
     "amountPaise": 2500000,
-    "dueDate": "2026-06-15"
+    "dueDate": "2026-06-15",
+    "lateFeePolicy": {"type": "fixed_after_grace", "graceDays": 7, "amountPaise": 50000}
   },
   {
     "feeItemId": "F002",
     "studentId": "S001",
     "feeHead": "transport",
     "term": "Term 1",
+    "instalmentId": "S001-T1-I1-TRANSPORT",
+    "instalmentNumber": 1,
     "amountPaise": 800000,
-    "dueDate": "2026-06-15"
+    "dueDate": "2026-06-15",
+    "lateFeePolicy": {"type": "fixed_after_grace", "graceDays": 7, "amountPaise": 20000}
   },
   {
     "feeItemId": "F003",
     "studentId": "S002",
     "feeHead": "tuition",
     "term": "Term 1",
+    "instalmentId": "S002-T1-I1",
+    "instalmentNumber": 1,
     "amountPaise": 2400000,
-    "dueDate": "2026-07-20"
+    "dueDate": "2026-07-20",
+    "lateFeePolicy": {"type": "daily", "graceDays": 5, "dailyAmountPaise": 1000, "capPaise": 30000}
   },
   {
     "feeItemId": "F004",
     "studentId": "S002",
     "feeHead": "lab",
     "term": "Term 1",
+    "instalmentId": "S002-T1-I1-LAB",
+    "instalmentNumber": 1,
     "amountPaise": 300000,
-    "dueDate": "2026-07-20"
+    "dueDate": "2026-07-20",
+    "lateFeePolicy": {"type": "daily", "graceDays": 5, "dailyAmountPaise": 500, "capPaise": 15000}
   },
   {
     "feeItemId": "F005",
     "studentId": "S003",
     "feeHead": "tuition",
     "term": "Term 1",
+    "instalmentId": "S003-T1-I1",
+    "instalmentNumber": 1,
     "amountPaise": 2600000,
-    "dueDate": "2026-05-15"
+    "dueDate": "2026-05-15",
+    "lateFeePolicy": {"type": "fixed_after_grace", "graceDays": 10, "amountPaise": 75000}
   },
   {
     "feeItemId": "F006",
     "studentId": "S003",
     "feeHead": "exam",
     "term": "Term 1",
+    "instalmentId": "S003-T1-I1-EXAM",
+    "instalmentNumber": 1,
     "amountPaise": 400000,
-    "dueDate": "2026-05-15"
+    "dueDate": "2026-05-15",
+    "lateFeePolicy": {"type": "fixed_after_grace", "graceDays": 10, "amountPaise": 10000}
   },
   {
     "feeItemId": "F007",
     "studentId": "S004",
     "feeHead": "tuition",
     "term": "Term 1",
+    "instalmentId": "S004-T1-I1",
+    "instalmentNumber": 1,
     "amountPaise": 2200000,
-    "dueDate": "2026-08-25"
+    "dueDate": "2026-08-25",
+    "lateFeePolicy": {"type": "daily", "graceDays": 5, "dailyAmountPaise": 1000, "capPaise": 30000}
   },
   {
     "feeItemId": "F008",
     "studentId": "S004",
     "feeHead": "books",
     "term": "Term 1",
+    "instalmentId": "S004-T1-I1-BOOKS",
+    "instalmentNumber": 1,
     "amountPaise": 350000,
-    "dueDate": "2026-08-25"
+    "dueDate": "2026-08-25",
+    "lateFeePolicy": {"type": "daily", "graceDays": 5, "dailyAmountPaise": 500, "capPaise": 15000}
+  },
+  {
+    "feeItemId": "F009",
+    "studentId": "S001",
+    "feeHead": "tuition",
+    "term": "Term 2",
+    "instalmentId": "S001-T2-I1",
+    "instalmentNumber": 1,
+    "amountPaise": 1800000,
+    "dueDate": "2026-09-15",
+    "lateFeePolicy": {"type": "fixed_after_grace", "graceDays": 7, "amountPaise": 50000}
   }
 ]
-

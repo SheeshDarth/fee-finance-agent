@@ -5,7 +5,25 @@
     "status": "APPROVED",
     "approvedBy": "Accounts Head",
     "approvedAt": "2026-07-10",
-    "notes": "Family approved to clear pending amount in two instalments."
+    "notes": "Family approved to clear pending amount in two instalments.",
+    "totalAmountPaise": 2800000,
+    "installments": [
+      {
+        "installmentId": "PP001-I1",
+        "dueDate": "2026-08-05",
+        "amountPaise": 1400000,
+        "paidPaise": 0,
+        "status": "PENDING",
+        "paymentIds": ["P003"]
+      },
+      {
+        "installmentId": "PP001-I2",
+        "dueDate": "2026-09-05",
+        "amountPaise": 1400000,
+        "paidPaise": 0,
+        "status": "PENDING",
+        "paymentIds": []
+      }
+    ]
   }
 ]
-

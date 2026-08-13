@@ -22,6 +22,7 @@ def load_seed_data() -> dict[str, list[dict[str, Any]]]:
         "waivers": load_json("waivers.json"),
         "payments": load_json("payments.json"),
         "payment_plans": load_json("payment_plans.json"),
+        "payment_history": load_json("payment_history.json"),
     }
 
 
@@ -30,4 +31,3 @@ def write_output(payload: dict[str, Any], output_path: Path | None = None) -> Pa
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
     return path
-

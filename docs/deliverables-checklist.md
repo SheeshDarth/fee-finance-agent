@@ -20,10 +20,10 @@ Audited against the supplied Subhanu Technologies Fee Collection & Finance Agent
 | Google ADK 2.0 or justified equivalent | `backend/feeops_adk/agent.py`, agent-framework.md | PASS |
 | Optional demo video | Not required; demo-script.md is provided instead | N/A |
 | Firebase/Firestore live path | Existing test project was live-tested; company project is billing-enabled but awaits Firebase registration/database permission | PARTIAL: one-time company IAM/console setup remains |
-| Live Gemini | SDK and ADK wrapper wired; deterministic validation remains mandatory | PARTIAL: company service-account key and deployment test remain |
+| Live Gemini | Live Gemini wording run succeeded in `test1-457903`; deterministic validation remains mandatory | PASS for assessment project; company-project key/deployment remain pending |
 | Reminder sending | Explicitly not implemented per assignment rule | N/A by design |
 | Production deployment, bank imports, next-month forecasting | Documented limitations; outside the 3-hour assessment scope | N/A by design |
 
 ## Verdict
 
-The assessment deliverables are complete and evidenced. The optional cloud enhancements are implemented but two runtime capabilities remain externally blocked by the project's disabled billing: Firebase Authentication and Vertex AI Gemini. The deterministic local workflow is fully runnable and the Firestore worker is live-tested.
+The assessment deliverables are complete and evidenced. The Firebase and Gemini paths are live-tested in `test1-457903` with Blaze billing enabled. The separate company project is billing-enabled but still externally blocked by Firebase/Firestore IAM and has not been claimed as deployed. The deterministic local workflow remains the reproducible fallback.

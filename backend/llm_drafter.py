@@ -49,7 +49,8 @@ def validate_draft(message: str, position: dict[str, Any]) -> tuple[bool, str]:
     """Reject drafts that alter the deterministic amount or due date."""
     import re
 
-    amounts = set(re.findall(r"Rs\. [0-9,]+(?:\.[0-9]{2})?", message))
+    # Match the complete formatted amount without absorbing punctuation after it.
+    amounts = set(re.findall(r"Rs\. [0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?(?=[^0-9]|$)", message))
     expected_amount = position["reminderAmount"]
     if amounts != {expected_amount}:
         return False, f"Currency validation failed: expected only {expected_amount}, found {sorted(amounts)}"

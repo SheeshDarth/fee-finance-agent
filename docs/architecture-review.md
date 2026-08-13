@@ -15,7 +15,7 @@ Reviewed against the supplied assessment requirements and the three-hour prototy
 
 | Risk | Current treatment | Production improvement |
 | --- | --- | --- |
-| Billing disabled | Local fallback remains safe; exact external blocker documented | Link billing account and enable Identity Platform / Vertex AI |
+| Environment provenance | `test1-457903` is the live-tested Firebase/Gemini project; the company project is separate and IAM-blocked | Complete company Firebase registration, service identity, and deployment verification |
 | Reviewer decision does not yet re-run the ledger | Action is recorded and audited | Reconcile approved action into an immutable versioned ledger run |
 | Worker is a polling process | Simple, inspectable assessment worker | Run as Cloud Run Job, Cloud Scheduler trigger, or managed queue consumer |
 | Local JSON is the reproducible source | Prevents cloud dependency during assessment | Add validated CSV/Sheets ingestion with source snapshots |
@@ -24,5 +24,4 @@ Reviewed against the supplied assessment requirements and the three-hour prototy
 
 ## Verdict
 
-The assessment implementation is complete and reviewable. The only incomplete runtime capabilities are external cloud prerequisites: billing for Firebase Authentication and Vertex AI. The remaining production improvements are explicitly outside the three-hour assessment scope.
-
+The assessment implementation is complete and reviewable for the scoped prototype. Firebase, Firestore, and Gemini are live-tested in the assessment project. The company project still needs administrator IAM actions before its Firebase registration, Firestore database, service identity, and managed Agent Runtime deployment can be verified. The remaining production improvements are explicitly outside the three-hour assessment scope.

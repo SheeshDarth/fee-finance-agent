@@ -5,7 +5,7 @@ This is the single process file for running and demonstrating the assessment pro
 ## A. One-Time Setup
 
 1. Install Google Cloud SDK, Node.js, and Python.
-2. Authenticate the Google Cloud project:
+2. Authenticate the Google Cloud project. The canonical live-tested assessment path is `test1-457903`; the supplied company target is `intern-bnmit-july-2026` and requires the administrator actions in `docs/company-cloud-status.md` before switching this value:
    ~~~powershell
    gcloud auth login
    gcloud config set project test1-457903
@@ -19,7 +19,7 @@ This is the single process file for running and demonstrating the assessment pro
    pip install -r requirements.txt
    ~~~
 5. Copy .env.example to .env and set the project, credentials, location, and model.
-6. Enable Firebase for test1-457903, use the registered FeeOps Web App config in frontend/.env, and deploy rules:
+6. For the live-tested path, use the already registered FeeOps Web App config in `frontend/.env` and deploy rules:
    ~~~powershell
    firebase deploy --only firestore:rules
    ~~~
@@ -67,7 +67,7 @@ Open the displayed Vite URL and show, in order:
 
 ## D. Live Firestore Demonstration
 
-After billing and Firebase Email/Password are enabled:
+For the live-tested `test1-457903` path, Blaze billing and Firebase Email/Password are already enabled. For `intern-bnmit-july-2026`, complete the company-cloud runbook first:
 
 1. Create a reviewer account.
 2. Add reviewers/{uid} with active: true.
@@ -85,7 +85,7 @@ After billing and Firebase Email/Password are enabled:
 
 ## E. Live Gemini Demonstration
 
-After billing is enabled:
+For the live-tested `test1-457903` path, Vertex AI Gemini has been exercised successfully. For the company project, create the company service account and complete IAM before running:
 
 ~~~powershell
 cd backend
@@ -104,4 +104,3 @@ Gemini receives only deterministic facts for wording. It cannot set ledger value
 - Late fees: Rs. 1,835
 - Pending human review: Rs. 19,000
 - Ageing: 0-30 Rs. 5,285; 31-60 Rs. 13,700; 60+ Rs. 28,850
-

@@ -93,6 +93,21 @@ class FinanceInvariantTests(unittest.TestCase):
         valid, _ = validate_draft(f"Balance Rs. 99,999 due {aarav['reminderDueDate']}", aarav)
         self.assertFalse(valid)
 
+    def test_reminder_validator_accepts_live_model_punctuation(self):
+        positions, _ = calculate_positions(
+            students=self.data["students"], fee_items=self.data["fee_items"],
+            concessions=self.data["concessions"], waivers=self.data["waivers"],
+            payments=self.data["payments"], payment_plans=self.data["payment_plans"],
+            payment_history=self.data["payment_history"],
+            reconciliation_results=self.reconciliation, as_of=date(2026, 8, 13),
+        )
+        aarav = next(row for row in positions if row["studentId"] == "S001")
+        valid, note = validate_draft(
+            f"The amount due is {aarav['reminderAmount']}, which was due on {aarav['reminderDueDate']}. Then contact the accounts office.",
+            aarav,
+        )
+        self.assertTrue(valid, note)
+
     def test_audit_records_approval_authority(self):
         payload = build_finance_run(date(2026, 8, 13), use_llm=False)
         event_types = {event["eventType"] for event in payload["auditEvents"]}

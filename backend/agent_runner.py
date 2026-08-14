@@ -104,6 +104,9 @@ def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[
 
 def maybe_write_firestore(payload: dict[str, Any]) -> None:
     load_dotenv(BASE_DIR / ".env")
+    creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    if creds and not os.path.isabs(creds):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BASE_DIR / creds).resolve())
     project_id = os.getenv("GCP_PROJECT_ID")
     credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     if not project_id or not credentials:
@@ -134,6 +137,9 @@ def maybe_write_firestore(payload: dict[str, Any]) -> None:
 
 def main() -> None:
     load_dotenv(BASE_DIR / ".env")
+    creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    if creds and not os.path.isabs(creds):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BASE_DIR / creds).resolve())
     parser = argparse.ArgumentParser(description="Run the Fee Collection & Finance Agent demo.")
     parser.add_argument("--as-of", default="2026-08-13", help="Assessment date in YYYY-MM-DD format.")
     parser.add_argument("--firestore", action="store_true", help="Also write output to Firestore using backend/.env.")

@@ -79,7 +79,11 @@ def run_once(db: Any) -> None:
 
 
 def main() -> None:
-    load_dotenv(Path(__file__).resolve().with_name(".env"))
+    base_dir = Path(__file__).resolve().parent
+    load_dotenv(base_dir / ".env")
+    creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    if creds and not os.path.isabs(creds):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((base_dir / creds).resolve())
     parser = argparse.ArgumentParser(description="Process pending FeeOps Firestore runs.")
     parser.add_argument("--once", action="store_true", help="Process pending runs once and exit.")
     args = parser.parse_args()

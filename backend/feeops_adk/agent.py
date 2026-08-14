@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import date
 from pathlib import Path
@@ -14,6 +15,9 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 load_dotenv(BACKEND_DIR / ".env")
+creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if creds and not os.path.isabs(creds):
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BACKEND_DIR / creds).resolve())
 
 from agent_runner import build_finance_run  # noqa: E402
 

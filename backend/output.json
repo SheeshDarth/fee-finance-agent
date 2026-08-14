@@ -782,7 +782,7 @@
       "ageingBucket": "31-60",
       "tone": "firm but respectful reminder",
       "status": "DRAFT_FOR_REVIEW",
-      "message": "Dear Mr. Rakesh Sharma,\n\nThis is a friendly reminder regarding the outstanding school fees for Aarav Sharma. The amount due is Rs. 13,700, which was due on 2026-06-15. Our records indicate this payment is currently 59 days overdue.\n\nWe kindly request your prompt attention to this matter. Please contact the accounts office if you have any questions or require clarification.\n\nThank you for your cooperation.\n\nSincerely,\n[School Name] Accounts Office",
+      "message": "Dear Mr. Rakesh Sharma, This is a friendly reminder regarding the outstanding school fees for Aarav Sharma. The amount due is Rs. 13,700, which was originally due on 2026-06-15. We kindly request your prompt attention to this matter. Thank you.",
       "generationSource": "GEMINI",
       "model": "Gemini",
       "generationError": null,
@@ -799,7 +799,7 @@
       "ageingBucket": "0-30",
       "tone": "polite reminder",
       "status": "DRAFT_FOR_REVIEW",
-      "message": "Dear Ms. Kavita Iyer,\n\nThis is a friendly reminder regarding the outstanding school fees for Meera Iyer. The amount due is Rs. 5,285, which was originally due on 2026-07-20. We kindly request your prompt attention to this matter.\n\nSincerely,\n[School Accounts Office]",
+      "message": "Dear Ms. Kavita Iyer, This is a friendly reminder regarding the outstanding school fees for Meera Iyer. The amount due is Rs. 5,285, which was due on 2026-07-20. We kindly request you to settle this amount at your earliest convenience. Thank you for your attention to this matter. Sincerely, Accounts Office",
       "generationSource": "GEMINI",
       "model": "Gemini",
       "generationError": null,
@@ -814,7 +814,7 @@
     {
       "eventType": "FINANCE_RUN_STARTED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "asOf": "2026-08-13"
       }
@@ -822,7 +822,7 @@
     {
       "eventType": "CONCESSION_APPROVED",
       "actor": "Principal",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "concessionId": "C001",
         "studentId": "S001",
@@ -835,7 +835,7 @@
     {
       "eventType": "CONCESSION_APPROVED",
       "actor": "Trust Office",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "concessionId": "C002",
         "studentId": "S002",
@@ -848,7 +848,7 @@
     {
       "eventType": "WAIVER_APPROVED",
       "actor": "Principal",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "waiverId": "W001",
         "studentId": "S003",
@@ -861,7 +861,7 @@
     {
       "eventType": "PAYMENT_PLAN_APPROVED",
       "actor": "Accounts Head",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "planId": "PP001",
         "studentId": "S003",
@@ -895,7 +895,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "paymentId": "P001",
         "amountPaise": 1500000,
@@ -911,7 +911,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "paymentId": "P002",
         "amountPaise": 1500000,
@@ -927,7 +927,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "paymentId": "P003",
         "amountPaise": 1000000,
@@ -943,7 +943,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "paymentId": "P004",
         "amountPaise": 900000,
@@ -959,7 +959,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.328855+00:00",
       "details": {
         "paymentId": "P005",
         "amountPaise": 2550000,
@@ -975,7 +975,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.329377+00:00",
       "details": {
         "studentId": "S001",
         "outstandingPaise": 3170000,
@@ -1000,7 +1000,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.329377+00:00",
       "details": {
         "studentId": "S002",
         "outstandingPaise": 528500,
@@ -1024,7 +1024,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.329377+00:00",
       "details": {
         "studentId": "S003",
         "outstandingPaise": 2885000,
@@ -1050,7 +1050,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:37.857119+00:00",
+      "timestamp": "2026-08-14T17:51:57.329377+00:00",
       "details": {
         "studentId": "S004",
         "outstandingPaise": 0,
@@ -1072,7 +1072,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:52.062858+00:00",
+      "timestamp": "2026-08-14T17:52:12.256045+00:00",
       "details": {
         "studentId": "S001",
         "status": "DRAFT_FOR_REVIEW",
@@ -1082,7 +1082,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:52.062858+00:00",
+      "timestamp": "2026-08-14T17:52:12.256045+00:00",
       "details": {
         "studentId": "S002",
         "status": "DRAFT_FOR_REVIEW",
@@ -1092,7 +1092,7 @@
     {
       "eventType": "FINANCE_RUN_COMPLETED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-13T09:52:52.062858+00:00",
+      "timestamp": "2026-08-14T17:52:12.256045+00:00",
       "details": {
         "studentCount": 4,
         "reconciliationCount": 5,

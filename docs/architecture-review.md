@@ -25,4 +25,4 @@ Reviewed against the supplied assessment requirements and the three-hour prototy
 
 ## Verdict
 
-The assessment implementation is complete and reviewable for the scoped prototype. The company Cloud Run API can be deployed independently of Firebase; Firebase/Firestore live review and Vertex-backed wording still require their company IAM and activation checks. The remaining production improvements are explicitly outside the assessment scope.
+The assessment implementation is complete and reviewable for the scoped prototype. The company Cloud Run API is deployed and its ADK agent has been live-validated with Vertex AI tool calling. Firebase/Firestore live review remains blocked only by company Firebase registration and Native Firestore activation, so it must not be presented as connected or source-of-truth until those checks pass. The remaining production improvements are explicitly outside the assessment scope.

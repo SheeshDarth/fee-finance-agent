@@ -9,7 +9,8 @@ Checked on 2026-08-15. This note is the source of truth for the only intended de
 - Enabled APIs: Vertex AI, Firestore, Cloud Run, Cloud Build, Artifact Registry, and Cloud Storage.
 - Firestore database: not created; the current identity receives permission denied.
 - Firebase registration: not completed; `projects.addFirebase` returns 403 for the current identity.
-- Cloud Run: the project contains existing services, but FeeOps has not yet been deployed with its dedicated runtime service account.
+- Cloud Run: FeeOps ADK API is deployed and Ready as `feeops-backend-00007-tl4` at `https://feeops-backend-pohamtwcgq-uc.a.run.app`. An authenticated 2026-08-15 smoke test used Vertex AI Gemini, selected the cash-forecast and leakage tools, and returned grounded output.
+- Cloud Run runtime identity: the deployed service is temporarily using the default Compute Engine service account. It has sufficient Vertex access for the demonstrated ADK request, but it must be replaced with the documented least-privilege `feeops-runtime` identity before a production deployment.
 - Cloud Run Job: not yet created for the Firestore worker.
 - Local downloaded service-account key: it does not belong to this company project and must not be used.
 
@@ -17,6 +18,6 @@ Required administrator action: register the company project in Firebase, create 
 
 ## Claims To Make In The Interview
 
-Say: “The finance workflow, ADK wrapper, Firebase/Firestore integration, and guarded Gemini wording are implemented. The supplied company project is prepared with billing and core APIs; Firebase registration and Native Firestore creation are pending the organization administrator permissions documented in the runbook.”
+Say: “The finance workflow, bounded ADK agent, and guarded Vertex Gemini integration are implemented and the agent is live on the supplied company Cloud Run project. Firebase registration and Native Firestore creation are pending organization administrator permissions, so the live dashboard is not yet connected to company data.”
 
-Do not say: “The FeeOps agent is deployed to the company project” or “the company Firestore dashboard is live” until the activation and deployment checks in the runbook pass.
+Do not say: “the company Firestore dashboard is live” or “the agent derives its production data from Firestore” until the activation and worker checks in the runbook pass.

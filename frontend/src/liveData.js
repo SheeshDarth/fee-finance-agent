@@ -12,16 +12,24 @@ const CHILD_COLLECTIONS = [
   "reconciliation_results",
   "collection_worklist",
   "reminder_drafts",
+  "forecast_students",
+  "leakage_findings",
+  "agent_decisions",
+  "escalations",
   "audit_events",
 ];
 
-export async function createFinanceRun(asOf) {
+export async function createFinanceRun(asOf, customData = null) {
   if (!db) throw new Error("Firebase is not configured");
-  const run = await addDoc(collection(db, "finance_runs"), {
+  const payload = {
     status: "PENDING",
     asOf,
     requestedAt: serverTimestamp(),
-  });
+  };
+  if (customData) {
+    payload.customData = customData;
+  }
+  const run = await addDoc(collection(db, "finance_runs"), payload);
   return run.id;
 }
 

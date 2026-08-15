@@ -59,7 +59,7 @@ h2 { margin-bottom: 5px; color: #1b2b23; font-size: 18px; letter-spacing: -.01em
 .attentionIcon { width: 35px; height: 35px; display: grid; place-items: center; color: #8a6214; background: #f7eac1; border-radius: 50%; }
 .attentionLead h2 { margin-bottom: 0; font-size: 15px; }
 .attentionItems { display: flex; gap: 8px; }
-.attentionItems button { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 7px; min-width: 145px; padding: 8px 10px; color: #44584c; background: #fff; border: 1px solid #e3d7b6; border-radius: 5px; text-align: left; }
+.attentionItems button { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 7px; min-width: 132px; padding: 8px 10px; color: #44584c; background: #fff; border: 1px solid #e3d7b6; border-radius: 5px; text-align: left; }
 .attentionItems button:hover, .textButton:hover { border-color: #9cae9f; background: #f6faf7; }
 .attentionItems strong { grid-row: span 2; color: #1d4f35; font-size: 18px; }
 .attentionItems span { color: #6e7a73; font-size: 10px; line-height: 1.2; }
@@ -136,6 +136,14 @@ tbody tr:hover { background: #fafcfb; }
 .draftMessage { margin: 15px 0; color: #4b5c51; font-size: 12px; line-height: 1.65; }
 .draftFooter { align-items: center; color: #8a958e; font-size: 10px; }
 
+.insightGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.metricList { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border-top: 1px solid #e7ede9; }
+.metricList div { min-width: 0; padding: 13px 12px 0 0; }
+.metricList div + div { padding-left: 12px; border-left: 1px solid #e7ede9; }
+.metricList dt { color: #75837b; font-size: 10px; line-height: 1.35; }
+.metricList dd { margin: 6px 0 0; color: #1d3929; font-size: 16px; font-weight: 800; line-height: 1.25; }
+.insightNote { margin: 16px 0 0; color: #78857d; font-size: 11px; line-height: 1.45; }
+
 .auditList { border-top: 1px solid #edf1ee; }
 .auditRow { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 12px; padding: 13px 2px; border-bottom: 1px solid #edf1ee; }
 .auditDot { width: 8px; height: 8px; border-radius: 50%; background: #77a382; }
@@ -178,7 +186,7 @@ tbody tr:hover { background: #fafcfb; }
   .attentionItems strong { grid-row: auto; }
   .attentionItems span { grid-column: 1 / -1; grid-row: 2; }
   .attentionItems svg { grid-column: 2; grid-row: 1; }
-  .dashboardGrid, .draftGrid { grid-template-columns: 1fr; }
+  .dashboardGrid, .draftGrid, .insightGrid { grid-template-columns: 1fr; }
   .sectionHeader { flex-direction: column; }
   .sectionHeader > .badge, .sectionHeader > .searchBox { align-self: stretch; }
   .searchBox { width: auto; }
@@ -204,4 +212,7 @@ tbody tr:hover { background: #fafcfb; }
   .ageingAmount { font-size: 11px; }
   .worklistSummary { gap: 12px; }
   .draftFooter { flex-wrap: wrap; }
+  .metricList { grid-template-columns: 1fr; }
+  .metricList div { padding: 10px 0 0; }
+  .metricList div + div { padding-left: 0; border-left: 0; }
 }

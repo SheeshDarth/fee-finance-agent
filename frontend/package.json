@@ -6,12 +6,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "firebase": "latest",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "firebase": "latest",
-    "lucide-react": "latest"
-  },
-  "devDependencies": {}
+    "vite": "latest",
+    "xlsx": "^0.18.5"
+  }
 }
-

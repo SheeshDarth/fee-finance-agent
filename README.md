@@ -4,7 +4,7 @@ FeeOps is a scoped school-fee finance workflow for the Subhanu Technologies asse
 
 ## Assessment Position
 
-This repository is a working assessment prototype with a local deterministic path, a live-tested Firebase/Firestore path in `test1-457903`, and a Google ADK wrapper suitable for local ADK testing and Agent Runtime packaging. It is not presented as a production deployment. The company project `intern-bnmit-july-2026` is billing-enabled and has the core APIs enabled, but the current developer identity still lacks permission to register Firebase and create its Firestore database. See [docs/company-cloud-status.md](docs/company-cloud-status.md) before making any deployment claim.
+This repository is a working assessment prototype with a deterministic local path, Firebase/Firestore dashboard integration, a Google ADK wrapper, and a Cloud Run deployment path. The only intended target is the supplied company project, `intern-bnmit-july-2026`. It is not presented as a production deployment. Its current activation state and the exact administrator handoff are recorded in [docs/company-cloud-status.md](docs/company-cloud-status.md).
 
 ## Deliverables
 
@@ -14,6 +14,7 @@ This repository is a working assessment prototype with a local deterministic pat
 - [Architecture and rendered diagrams](architecture.md) and [docs/diagrams.md](docs/diagrams.md)
 - [Data model and rationale](docs/data-model.md)
 - [Financial controls](docs/financial-controls.md) and [LLM safety](docs/llm-safety.md)
+- [Forecasting and fee-leakage controls](docs/forecasting-and-leakage-controls.md)
 - [Demo script](docs/demo-script.md)
 - [Validation transcript](docs/verification-transcript.md)
 - [Cloud provenance](docs/company-cloud-status.md)
@@ -53,7 +54,7 @@ cd ..\frontend
 npm install
 ```
 
-For the live-tested assessment project, set `GCP_PROJECT_ID=test1-457903` in `backend/.env` and put the matching ignored service-account key at `backend/service-account.json`. For the company project, use a newly created company-project service account and do not reuse the old key. Copy the Firebase Web App settings to the ignored `frontend/.env`.
+Set `GCP_PROJECT_ID=intern-bnmit-july-2026` in `backend/.env`. For local cloud testing, authenticate with `gcloud auth application-default login`; for Cloud Run, attach the company runtime service account. Do not create or use a service-account JSON key. Once the company Firebase Web App exists, copy its six values into ignored `frontend/.env`.
 
 ## Run the Deterministic Workflow
 
@@ -72,7 +73,7 @@ cd frontend
 npm run dev
 ```
 
-Open the Vite URL and demonstrate Overview, Payment review, Collection worklist, Reminder drafts, and Audit trail in that order. The dashboard uses local demo output when not signed in. The live Firebase path subscribes to run state and child collections with `onSnapshot` after a reviewer signs in.
+Open the Vite URL and demonstrate Overview, Payment review, Collection worklist, Reminder drafts, Forecast & controls, and Audit trail in that order. The dashboard uses local demo output when not signed in. The live Firebase path subscribes to run state and child collections with `onSnapshot` after a reviewer signs in.
 
 ## Optional Live Gemini Run
 
@@ -92,11 +93,11 @@ cd backend
 adk web feeops_adk
 ```
 
-The ADK root agent exposes read-only tools: `run_fee_workflow` and `get_money_guardrail`. It cannot edit fees, approve payments, send reminders, or change ledger values. Package/deployment instructions and the current company-project blocker are in [docs/company-cloud-deployment.md](docs/company-cloud-deployment.md).
+The ADK root agent exposes read-only tools: `run_fee_workflow`, `get_agent_decisions`, `get_escalations`, `get_cash_forecast`, `get_leakage_findings`, and `get_money_guardrail`. It cannot edit fees, approve payments, send reminders, or change ledger values. Cloud Run deployment instructions and the current company-project blocker are in [docs/company-cloud-deployment.md](docs/company-cloud-deployment.md).
 
 ## Firebase and Firestore
 
-The old live-tested Firebase project already has a Native Firestore database, FeeOps web app, deployed rules, and Email/Password Identity Platform authentication. The worker can publish a one-shot run:
+After the company Firebase project and Native Firestore database are activated, the worker can publish a one-shot run:
 
 ```powershell
 cd backend
@@ -122,6 +123,6 @@ The exact results and cloud provenance are recorded in [docs/verification-transc
 - Only CONFIDENT reconciliations reduce verified collections. POSSIBLE and NEEDS_REVIEW payments remain visible and excluded.
 - Reminders are drafts for human review. No outbound message is sent.
 - Concessions, waivers, plans, and reviewer actions require recorded authority in the demo data or authenticated Firestore path.
-- The prototype does not include bank-file ingestion, duplicate/overpayment resolution, production identity governance, full historical data quality controls, or a production deployment SLA.
+- The prototype uses synthetic transfer, refund, and adjustment exception fixtures. It does not include production source-system ingestion, statistically validated forecasting, full duplicate/overpayment resolution, production identity governance, or a production deployment SLA.
 
 See [docs/financial-controls.md](docs/financial-controls.md), [docs/architecture-review.md](docs/architecture-review.md), and [docs/deliverables-checklist.md](docs/deliverables-checklist.md) for the detailed rationale and remaining work.

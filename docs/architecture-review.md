@@ -15,13 +15,14 @@ Reviewed against the supplied assessment requirements and the three-hour prototy
 
 | Risk | Current treatment | Production improvement |
 | --- | --- | --- |
-| Environment provenance | `test1-457903` is the live-tested Firebase/Gemini project; the company project is separate and IAM-blocked | Complete company Firebase registration, service identity, and deployment verification |
+| Company cloud activation | Firebase/Firestore integration and Cloud Run runtime identity require company IAM and one live validation | Complete company Firebase registration, service identity, worker deployment, and deployment verification |
 | Reviewer decision does not yet re-run the ledger | Action is recorded and audited | Reconcile approved action into an immutable versioned ledger run |
 | Worker is a polling process | Simple, inspectable assessment worker | Run as Cloud Run Job, Cloud Scheduler trigger, or managed queue consumer |
 | Local JSON is the reproducible source | Prevents cloud dependency during assessment | Add validated CSV/Sheets ingestion with source snapshots |
-| No next-month forecast | Outside required deliverables | Add a forecast model based on plan schedule and historical collections |
+| Sparse forecast history | The deterministic 30-day estimate is explicitly LOW confidence with five historical records | Use 12+ monthly cycles, term calendar features, calibration, and back-testing |
+| Leakage findings are synthetic | Exception scanner demonstrates controls against fixture records | Ingest approved transfer, refund, adjustment, and receipt source systems |
 | No outbound messaging | Required by assignment | Add a separately approved notification service with delivery audit |
 
 ## Verdict
 
-The assessment implementation is complete and reviewable for the scoped prototype. Firebase, Firestore, and Gemini are live-tested in the assessment project. The company project still needs administrator IAM actions before its Firebase registration, Firestore database, service identity, and managed Agent Runtime deployment can be verified. The remaining production improvements are explicitly outside the three-hour assessment scope.
+The assessment implementation is complete and reviewable for the scoped prototype. The company Cloud Run API can be deployed independently of Firebase; Firebase/Firestore live review and Vertex-backed wording still require their company IAM and activation checks. The remaining production improvements are explicitly outside the assessment scope.

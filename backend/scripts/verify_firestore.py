@@ -1,4 +1,4 @@
-"""verify_firestore.py -- Check finance_runs and reviewers collections."""
+"""verify_firestore.py -- Check finance_runs and reviewers collections with ADC."""
 from __future__ import annotations
 import json, os, sys
 from pathlib import Path
@@ -17,17 +17,13 @@ creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 if creds and not os.path.isabs(creds):
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BACKEND_DIR / creds).resolve())
 
-import firebase_admin
-from firebase_admin import credentials, firestore
+project_id = os.getenv("GCP_PROJECT_ID", "").strip()
+if not project_id:
+    sys.exit("ERROR: GCP_PROJECT_ID must be set. Use ADC locally or a Cloud Run runtime identity.")
 
-cred_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")
-if not cred_path or not os.path.exists(cred_path):
-    sys.exit(f"ERROR: GOOGLE_APPLICATION_CREDENTIALS not found at: {cred_path}")
+from google.cloud import firestore
 
-if not firebase_admin._apps:
-    firebase_admin.initialize_app(credentials.Certificate(cred_path))
-
-db = firestore.client()
+db = firestore.Client(project=project_id)
 
 # Check finance_runs
 runs = list(db.collection("finance_runs").limit(3).stream())

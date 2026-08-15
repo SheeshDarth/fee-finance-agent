@@ -6,16 +6,17 @@ This prototype uses a deterministic Python workflow plus a real Google ADK 2.x w
 
 ## Justification
 
-The assessment's highest-risk behavior is monetary correctness. The workflow has a fixed sequence, explicit state transitions, integer-paise calculations, trace IDs, confidence gates, and human-review boundaries. There is no benefit in allowing an autonomous model to choose tools or mutate financial state.
+The assessment's highest-risk behavior is monetary correctness. The workflow has a fixed sequence, explicit state transitions, integer-paise calculations, trace IDs, confidence gates, and human-review boundaries. The ADK model may select read-only evidence tools for a reviewer question, but it cannot choose or execute financial state changes.
 
-ADK is the agent orchestration and conversational boundary. Its tools expose the trusted workflow as read-only operations. Python remains authoritative for fee heads, instalments, concessions, waivers, payments, late fees, balances, ageing, plan compliance, worklist scores, and audit records.
+ADK is the agent orchestration and conversational boundary. Its read-only tools expose the trusted workflow, deterministic per-case decisions, escalation queue, 30-day cash-planning estimate, and leakage-control findings. Python remains authoritative for fee heads, instalments, concessions, waivers, payments, late fees, balances, ageing, plan compliance, worklist scores, forecast inputs, control checks, and audit records.
 
 ## Agent Boundary
 
 ~~~mermaid
 flowchart LR
   ADK[Google ADK 2.x Agent Runtime] -->|read-only tool call| Facts
-  Facts["Deterministic ledger facts"] --> Prompt["Constrained Gemini prompt"]
+  Facts["Deterministic ledger facts"] --> Forecast["Forecasting and leakage tools"]
+  Forecast --> Prompt["Constrained Gemini prompt"]
   Prompt --> Model["Vertex AI Gemini"]
   Model --> Draft["Subject, tone, message"]
   Draft --> Guard["Exact amount and due-date validator"]
@@ -24,4 +25,4 @@ flowchart LR
   Facts -. never model-authored .-> Ledger["Official ledger values"]
 ~~~
 
-The model cannot write Firestore financial collections, approve payments, alter balances, or send reminders. This bounded design is intentionally safer than a general autonomous agent for a finance workflow.
+The model cannot write Firestore financial collections, approve payments, alter balances, or send reminders. The deterministic decision layer can only choose `DRAFT_REMINDER`, `ESCALATE_FOR_REVIEW`, or `SKIP_PAID_OR_PLAN`; control findings route the case to review before collection contact. Drafts remain human-review only. This bounded design is intentionally safer than a general autonomous agent for a finance workflow.

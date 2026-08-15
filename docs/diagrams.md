@@ -20,6 +20,7 @@ flowchart LR
     P[Payments]
     H[Payment history]
     PP[Approved payment plans]
+    T[Transfers refunds adjustments]
   end
   subgraph Engine["Python finance agent"]
     R[Reconciliation confidence gate]
@@ -27,6 +28,8 @@ flowchart LR
     LF[Late-fee policy engine]
     PC[Plan compliance]
     WL[History-based worklist]
+    FC[Cash forecast]
+    LC[Leakage controls]
     D[Reminder drafter and validator]
     AU[Audit event writer]
   end
@@ -43,10 +46,14 @@ flowchart LR
   P --> R
   H --> WL
   PP --> PC
+  T --> LC
   R --> L
   LF --> L
   L --> PC
   PC --> WL
+  L --> FC
+  R --> LC
+  PC --> LC
   L --> D
   D -. wording only .-> G
   G -. validated wording .-> D
@@ -74,11 +81,16 @@ flowchart TD
   Adjust --> Position[Build student position]
   Position --> Plan[Evaluate each plan installment]
   Plan --> Score[Score collection worklist with history]
-  Score --> Draft[Draft reminders for overdue families without approved plans]
+  Score --> Forecast[Build history-based cash forecast]
+  Forecast --> Controls[Scan transfers refunds concessions and adjustments]
+  Controls --> Route{Safe collection action?}
+  Route -->|Draft allowed| Draft[Draft reminders for eligible families]
+  Route -->|Control exception| Escalate[Create reviewer escalation]
   Draft --> Validate{Exact money and due-date validation}
   Validate -->|Pass| Audit[Write audit events]
   Validate -->|Fail| Fallback[Use deterministic fallback and audit reason]
   Fallback --> Audit
+  Escalate --> Audit
   Audit --> Publish[Write local output or Firestore run]
   Publish --> End([Complete or awaiting review])
 ~~~

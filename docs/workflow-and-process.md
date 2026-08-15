@@ -5,12 +5,13 @@ This is the single process file for running and demonstrating the assessment pro
 ## A. One-Time Setup
 
 1. Install Google Cloud SDK, Node.js, and Python.
-2. Authenticate the Google Cloud project. The canonical live-tested assessment path is `test1-457903`; the supplied company target is `intern-bnmit-july-2026` and requires the administrator actions in `docs/company-cloud-status.md` before switching this value:
+2. Authenticate the supplied company project, `intern-bnmit-july-2026`. Firebase registration, Native Firestore, and a Web App must exist before the live reviewer path can run:
    ~~~powershell
    gcloud auth login
-   gcloud config set project test1-457903
+   gcloud config set project intern-bnmit-july-2026
+   gcloud auth application-default login
    ~~~
-3. Keep the service-account key at backend/service-account.json; it is ignored by Git.
+3. Do not create or download a service-account key. Local cloud testing uses Application Default Credentials; Cloud Run uses its attached runtime identity.
 4. Install backend dependencies:
    ~~~powershell
    cd backend
@@ -18,8 +19,8 @@ This is the single process file for running and demonstrating the assessment pro
    .\venv\Scripts\Activate.ps1
    pip install -r requirements.txt
    ~~~
-5. Copy .env.example to .env and set the project, credentials, location, and model.
-6. For the live-tested path, use the already registered FeeOps Web App config in `frontend/.env` and deploy rules:
+5. Copy `.env.example` to `.env` and set the company project, location, and model. Copy the company Firebase Web App values to ignored `frontend/.env`.
+6. Deploy the reviewed rules after Firestore exists:
    ~~~powershell
    firebase deploy --only firestore:rules
    ~~~
@@ -43,10 +44,12 @@ The runner performs:
 7. Calculate outstanding, overdue, ageing, and fee-head totals.
 8. Evaluate each approved plan's installment schedule and compliance.
 9. Score the collection worklist using amount, ageing, late, partial, missed, and average-delay history.
-10. Draft reminders only for overdue families with no approved plan.
-11. Validate every amount and due date in reminder wording.
-12. Write approval, reconciliation, position, reminder, and completion audit events.
-13. Write backend/output.json and frontend/src/demo-output.json.
+10. Build a history-based 30-day cash-planning estimate with an explicit confidence label.
+11. Scan payment, transfer, refund, adjustment, concession, receipt, and plan records for review-only leakage-control findings.
+12. Route each account to a validated reminder draft, escalation, or skip action; control findings block unsafe collection contact.
+13. Validate every amount and due date in reminder wording.
+14. Write approval, reconciliation, forecast, control, position, reminder, decision, escalation, and completion audit events.
+15. Write `backend/output.json` and `frontend/src/demo-output.json`.
 
 ## C. Dashboard Demonstration
 
@@ -62,20 +65,19 @@ Open the displayed Vite URL and show, in order:
 2. Payment review: P003 possible match and P004 unmatched human-review rows.
 3. Collection worklist: rank, score, history reason, and Kabir's approved-plan suppression.
 4. Reminder drafts: 31-60 firm tone and 0-30 polite tone, exact due dates and amounts.
-5. Audit trail: approved concessions, waiver, payment plan, reconciliations, positions, drafts, and run completion.
-6. Mobile layout: wrapped navigation, stacked controls, and scroll-contained tables.
+5. Forecast & controls: low-confidence 30-day estimate, likely-delay families, and exception findings routed for review.
+6. Audit trail: approved concessions, waiver, payment plan, reconciliations, forecasts, control findings, decisions, drafts, and run completion.
+7. Mobile layout: wrapped navigation, stacked controls, and scroll-contained tables.
 
 ## D. Live Firestore Demonstration
 
-For the live-tested `test1-457903` path, Blaze billing and Firebase Email/Password are already enabled. For `intern-bnmit-july-2026`, complete the company-cloud runbook first:
+For `intern-bnmit-july-2026`, complete `docs/company-cloud-deployment.md` before the live run:
 
 1. Create a reviewer account.
 2. Add reviewers/{uid} with active: true.
-3. Start:
+3. Deploy the `feeops-firestore-worker` Cloud Run Job, then run it after the reviewer requests a live run:
    ~~~powershell
-   cd backend
-   .\venv\Scripts\Activate.ps1
-   python firestore_worker.py
+   gcloud run jobs execute feeops-firestore-worker --project intern-bnmit-july-2026 --region us-central1 --wait
    ~~~
 4. Open the dashboard and sign in.
 5. Click Run live workflow.
@@ -85,7 +87,7 @@ For the live-tested `test1-457903` path, Blaze billing and Firebase Email/Passwo
 
 ## E. Live Gemini Demonstration
 
-For the live-tested `test1-457903` path, Vertex AI Gemini has been exercised successfully. For the company project, create the company service account and complete IAM before running:
+For the company project, deploy the ADK API with an attached runtime identity that has Vertex AI User before running:
 
 ~~~powershell
 cd backend
@@ -104,3 +106,5 @@ Gemini receives only deterministic facts for wording. It cannot set ledger value
 - Late fees: Rs. 1,835
 - Pending human review: Rs. 19,000
 - Ageing: 0-30 Rs. 5,285; 31-60 Rs. 13,700; 60+ Rs. 28,850
+- 30-day estimate: Rs. 15,346.82, explicitly LOW confidence from five history records
+- Control findings: five review-only signals; no ledger value is changed automatically

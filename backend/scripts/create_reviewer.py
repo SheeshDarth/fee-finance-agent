@@ -1,14 +1,16 @@
-r"""
-create_reviewer.py  --  One-shot: create Firebase Auth reviewer account and write reviewers/{uid} to Firestore.
+r"""Create a Firebase Auth reviewer and the required Firestore reviewer record.
 
-Usage (from repo root):
-    $env:GOOGLE_APPLICATION_CREDENTIALS = "backend\service-account.json"
-    .\backend\venv\Scripts\python.exe backend\scripts\create_reviewer.py
+Set FEEOPS_REVIEWER_EMAIL and FEEOPS_REVIEWER_PASSWORD in backend/.env before
+running. Cloud Run uses its attached runtime service account; local execution
+can use Application Default Credentials or an ignored company-project key.
 """
 from __future__ import annotations
-import os, sys
+import json
+import os
+import sys
 from pathlib import Path
-import requests
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT   = BACKEND_DIR.parent
@@ -27,53 +29,64 @@ def _load_env():
 _load_env()
 
 FIREBASE_API_KEY  = os.getenv("VITE_FIREBASE_API_KEY", "").strip()
-GCP_PROJECT_ID    = os.getenv("GCP_PROJECT_ID", "test1-457903").strip()
-REVIEWER_EMAIL    = "reviewer@feeops.demo"
-REVIEWER_PASSWORD = "FeeOps-Demo-2026!"
+GCP_PROJECT_ID    = os.getenv("GCP_PROJECT_ID", "").strip()
+REVIEWER_EMAIL    = os.getenv("FEEOPS_REVIEWER_EMAIL", "").strip()
+REVIEWER_PASSWORD = os.getenv("FEEOPS_REVIEWER_PASSWORD", "")
 
-def create_firebase_user(email, password):
+def identity_request(path: str, payload: dict[str, str]) -> dict[str, object]:
+    request = Request(
+        f"https://identitytoolkit.googleapis.com/v1/{path}?key={FIREBASE_API_KEY}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=15) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except HTTPError as error:
+        body = error.read().decode("utf-8")
+        raise RuntimeError(body) from error
+
+
+def create_firebase_user(email: str, password: str) -> str:
     if not FIREBASE_API_KEY:
         sys.exit("ERROR: VITE_FIREBASE_API_KEY not set. Load frontend/.env first.")
-    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={FIREBASE_API_KEY}"
-    resp = requests.post(url, json={"email": email, "password": password, "returnSecureToken": True}, timeout=15)
-    body = resp.json()
-    if resp.status_code == 200:
-        uid = body["localId"]
+    try:
+        body = identity_request("accounts:signUp", {"email": email, "password": password, "returnSecureToken": "true"})
+    except RuntimeError as error:
+        if "EMAIL_EXISTS" not in str(error):
+            sys.exit(f"ERROR creating Firebase user: {error}")
+        try:
+            body = identity_request("accounts:signInWithPassword", {"email": email, "password": password, "returnSecureToken": "true"})
+        except RuntimeError as sign_in_error:
+            sys.exit(f"ERROR signing in existing reviewer: {sign_in_error}")
+        uid = str(body["localId"])
+        print(f"[~] Reviewer already exists: {email}  uid={uid}")
+        return uid
+    else:
+        uid = str(body["localId"])
         print(f"[+] Created Firebase user: {email}  uid={uid}")
         return uid
-    if body.get("error", {}).get("message") == "EMAIL_EXISTS":
-        url2 = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}"
-        r2   = requests.post(url2, json={"email": email, "password": password, "returnSecureToken": True}, timeout=15)
-        b2   = r2.json()
-        if r2.status_code == 200:
-            uid = b2["localId"]
-            print(f"[~] User already exists: {email}  uid={uid}")
-            return uid
-        sys.exit(f"ERROR signing in existing user: {b2}")
-    sys.exit(f"ERROR creating Firebase user: {body}")
 
-def write_reviewer_doc(uid):
-    try:
-        import firebase_admin
-        from firebase_admin import credentials as fb_creds, firestore as fb_fs
-    except ImportError:
-        sys.exit("ERROR: firebase-admin not installed. Run: pip install firebase-admin")
+def write_reviewer_doc(uid: str) -> None:
     import datetime
-    cred_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")
-    if not cred_path or not os.path.exists(cred_path):
-        sys.exit(f"ERROR: GOOGLE_APPLICATION_CREDENTIALS not found at: {cred_path}")
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(fb_creds.Certificate(cred_path))
-    db = fb_fs.client()
+    from google.cloud import firestore
+
+    db = firestore.Client(project=GCP_PROJECT_ID)
     db.collection("reviewers").document(uid).set({
         "email": REVIEWER_EMAIL,
         "role": "reviewer",
+        "active": True,
         "createdAt": datetime.datetime.utcnow().isoformat() + "Z",
         "project": GCP_PROJECT_ID,
     })
     print(f"[+] Wrote reviewers/{uid} to Firestore project={GCP_PROJECT_ID}")
 
 def main():
+    if not GCP_PROJECT_ID:
+        sys.exit("ERROR: GCP_PROJECT_ID must be set in backend/.env.")
+    if not REVIEWER_EMAIL or not REVIEWER_PASSWORD:
+        sys.exit("ERROR: Set FEEOPS_REVIEWER_EMAIL and FEEOPS_REVIEWER_PASSWORD in backend/.env.")
     print(f"FeeOps reviewer setup  --  project: {GCP_PROJECT_ID}")
     uid = create_firebase_user(REVIEWER_EMAIL, REVIEWER_PASSWORD)
     write_reviewer_doc(uid)
@@ -81,7 +94,6 @@ def main():
     print("=" * 60)
     print("Reviewer account ready!")
     print(f"  Email   : {REVIEWER_EMAIL}")
-    print(f"  Password: {REVIEWER_PASSWORD}")
     print(f"  UID     : {uid}")
     print(f"  Firestore: reviewers/{uid}")
     print("=" * 60)

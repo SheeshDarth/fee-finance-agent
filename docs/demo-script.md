@@ -8,7 +8,10 @@ From the repository root:
 
 \`\`\`powershell
 .\\backend\\venv\\Scripts\\python.exe backend\\agent_runner.py --as-of 2026-08-13
-cd frontend
+cd backend
+.\\venv\\Scripts\\Activate.ps1
+python -m uvicorn local_api:app --host 127.0.0.1 --port 8000
+cd ..\\frontend
 npm run dev
 \`\`\`
 
@@ -32,6 +35,7 @@ Expected dashboard figures:
 5. **Forecast & controls**: show the 30-day estimate as LOW confidence, the likely-delay cases, and the transfer/refund/adjustment/payment exception queue. Explain that a finding is not a proven loss and never alters a balance.
 6. **Audit trail**: show run start, reconciliation decisions, student positions, forecast/control events, reminder creation, and run completion.
 7. **Responsive UI**: resize to a mobile width and show the wrapped navigation, stacked header controls, two-column metrics, and scroll-contained data tables.
+8. **Local import**: upload `payments.csv` or the supplied `template.xlsx`; show that the dashboard refreshes from the Python ledger immediately, without Firebase polling.
 
 ## 3. Explain the Money Safety Boundary
 

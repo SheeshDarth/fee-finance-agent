@@ -51,6 +51,12 @@ The runner performs:
 ## C. Dashboard Demonstration
 
 ~~~powershell
+# Terminal 1
+cd backend
+.\venv\Scripts\Activate.ps1
+python -m uvicorn local_api:app --host 127.0.0.1 --port 8000
+
+# Terminal 2
 cd frontend
 npm install
 npm run dev
@@ -65,6 +71,7 @@ Open the displayed Vite URL and show, in order:
 5. Forecast & controls: low-confidence 30-day estimate, likely-delay families, and exception findings routed for review.
 6. Audit trail: approved concessions, waiver, payment plan, reconciliations, forecasts, control findings, decisions, drafts, and run completion.
 7. Mobile layout: wrapped navigation, stacked controls, and scroll-contained tables.
+8. Local import: upload `payments.csv` or `template.xlsx` and show refreshed totals without Firebase or a polling delay.
 
 ## D. Live Cloud Run Agent Demonstration
 

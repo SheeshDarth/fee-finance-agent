@@ -4,7 +4,7 @@ Validated on 2026-08-15 from the repository root and the supplied company Cloud 
 
 ## Automated Checks
 
-- Backend: `python -m unittest discover -s backend -p 'test_*.py' -v` -> 11 tests passed, including finance invariants, agent decisions, forecasting, and leakage controls.
+- Backend: `python -m unittest discover -s backend -p 'test_*.py' -v` -> 15 tests passed, including finance invariants, agent decisions, forecasting, leakage controls, local CSV merging, and fractional-paise rejection.
 - Python syntax: every backend `.py` file compiled successfully.
 - Frontend: `npm run build` -> Vite production build passed.
 - Financial invariants: verified collections exclude P003/P004; net due equals collected plus outstanding; ageing overdue buckets reconcile; late fee and history score fixtures are visible.
@@ -13,6 +13,7 @@ Validated on 2026-08-15 from the repository root and the supplied company Cloud 
 - Agents CLI: `uvx google-agents-cli --version` returned `1.3.1`; deployment metadata is kept in `backend/agents-cli-manifest.yaml` and `backend/pyproject.toml`.
 - Repository hygiene: service-account key and environment files remain ignored and untracked.
 - Browser smoke: Vite served HTTP 200; desktop snapshot rendered the dashboard; mobile viewport measured `scrollWidth == clientWidth` at 390px; worklist exposed score and plan-compliance values.
+- Local import: the `local_api` accepted the supplied multi-sheet `template.xlsx` and a payment-import payload. The payment import changed outstanding from Rs. 65,835 to Rs. 101,335 without Firebase polling; CORS was verified from a localhost Vite origin.
 - Google Cloud: company project `intern-bnmit-july-2026` exists, is billing-enabled, and has Vertex AI, Firestore, Cloud Run, Cloud Build, Artifact Registry, and Cloud Storage APIs enabled. The downloaded local key is still for `test1-457903` and must be replaced before company deployment.
 - Firestore worker: a temporary `PENDING` run transitioned to `AWAITING_REVIEW` and published 4 positions, 5 reconciliation rows, 3 worklist rows, 2 reminder drafts, and 17 audit events; validation data was removed afterward.
 - Firebase: the old `test1-457903` project registration, web app, and rules deployment were completed and tested as an optional integration. The company administrator has explicitly selected no Firebase registration for `intern-bnmit-july-2026`.

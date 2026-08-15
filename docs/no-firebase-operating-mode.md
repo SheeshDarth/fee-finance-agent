@@ -54,12 +54,17 @@ Run the local deterministic workflow, then Vite:
 
 ```powershell
 .\backend\venv\Scripts\python.exe .\backend\agent_runner.py --as-of 2026-08-13
-cd frontend
+cd backend
+.\venv\Scripts\Activate.ps1
+python -m uvicorn local_api:app --host 127.0.0.1 --port 8000
+cd ..\frontend
 npm run dev
 ```
 
-This is intentionally separate from the private Cloud Run service. A browser
-cannot safely mint the user IAM token required by a private Cloud Run endpoint.
+This is intentionally separate from the private Cloud Run service. The local
+API enables immediate CSV/Excel dashboard refreshes; see
+[local-import.md](local-import.md). A browser cannot safely mint the user IAM
+token required by a private Cloud Run endpoint.
 The dashboard demonstrates the same generated run data; the PowerShell client
 demonstrates the live Vertex-backed agent.
 

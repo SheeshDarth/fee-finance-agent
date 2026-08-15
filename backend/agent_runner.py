@@ -18,6 +18,7 @@ from forecasting import build_cash_forecast
 from leakage import detect_fee_leakage
 from reconciliation import reconcile_payments
 from reminders import draft_reminders
+from data_import import merge_import_data
 from seed_data import load_seed_data, write_output
 
 
@@ -164,7 +165,7 @@ def build_agent_decisions(
 
 def build_finance_run(as_of: date | None = None, use_llm: bool = False, override_data: dict[str, Any] | None = None) -> dict[str, Any]:
     as_of = as_of or date.today()
-    data = override_data or load_seed_data()
+    data = merge_import_data(override_data) if override_data is not None else load_seed_data()
     events = [audit_event("FINANCE_RUN_STARTED", {"asOf": as_of.isoformat()})]
     for concession in data["concessions"]:
         events.append(audit_event("CONCESSION_APPROVED", concession, actor=concession.get("approvedBy", "fee-agent-runner")))

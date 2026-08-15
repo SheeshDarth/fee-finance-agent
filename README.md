@@ -19,12 +19,14 @@ This repository is a working assessment prototype with a deterministic local das
 - [Validation transcript](docs/verification-transcript.md)
 - [Cloud provenance](docs/company-cloud-status.md)
 - [No-Firebase operating mode](docs/no-firebase-operating-mode.md)
+- [Local CSV and Excel import](docs/local-import.md)
 
 ## Repository Layout
 
 ```text
 backend/
   agent_runner.py       deterministic end-to-end workflow
+  local_api.py          local CSV/Excel import endpoint for the dashboard
   ledger.py             integer-paise ledger, ageing, plans, worklist
   reconciliation.py     confidence-gated payment matching
   reminders.py          draft generation and validation
@@ -67,14 +69,20 @@ From the repository root:
 
 The run writes `backend/output.json` and `frontend/src/demo-output.json`. Expected snapshot: net due Rs. 121,335; verified collected Rs. 55,500; outstanding Rs. 65,835; overdue Rs. 47,835; late fees Rs. 1,835; and review payments P003/P004 excluded from verified collections.
 
-## Run the Dashboard
+## Run the Dashboard and Local Import API
 
 ```powershell
+# Terminal 1
+cd backend
+.\venv\Scripts\Activate.ps1
+python -m uvicorn local_api:app --host 127.0.0.1 --port 8000
+
+# Terminal 2
 cd frontend
 npm run dev
 ```
 
-Open the Vite URL and demonstrate Overview, Payment review, Collection worklist, Reminder drafts, Forecast & controls, and Audit trail in that order. The selected company mode uses local deterministic output; it does not need browser credentials, Firebase, or a public finance API.
+Open the Vite URL and demonstrate Overview, Payment review, Collection worklist, Reminder drafts, Forecast & controls, and Audit trail in that order. **Upload data** accepts the supplied multi-sheet Excel template or a named dataset CSV such as `payments.csv`; the local Python ledger returns refreshed values immediately. The selected company mode does not need browser credentials, Firebase, or a public finance API. See [local-import.md](docs/local-import.md) for the exact accepted schemas.
 
 ## Optional Live Gemini Run
 

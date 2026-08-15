@@ -6,7 +6,7 @@ Checked from the repository root and company Cloud Run on 2026-08-15.
 
 ```text
 python -m unittest discover -s backend -p "test_*.py" -v
-11 tests passed
+15 tests passed
 
 python -m compileall backend
 all backend Python files compiled successfully
@@ -29,6 +29,11 @@ drafts        2
 ```
 
 The ADK smoke check imported `feeops_adk`, exposed six read-only evidence tools, and returned outstanding Rs. 65,835, five reconciliation rows, forecasting, leakage findings, and audit events. Installed versions: `google-adk 2.6.3`, Agents CLI `1.3.1`.
+
+The local import check accepted the supplied multi-sheet Excel template and a
+payment CSV-shaped request. The uploaded payment changed outstanding from
+Rs. 65,835 to Rs. 101,335 and returned the refreshed run directly to the
+dashboard origin without Firebase polling.
 
 ## Live Checks: `test1-457903`
 

@@ -100,6 +100,47 @@ function LiveAuth({ user, email, password, setEmail, setPassword, onSignIn, onSi
   </form>;
 }
 
+function datasetNameFromFile(fileName) {
+  const baseName = fileName.replace(/\.[^.]+$/, "").trim().toLowerCase().replace(/[ -]+/g, "_");
+  const supported = new Set([
+    "students", "fee_items", "fee_structure", "concessions", "waivers", "payments",
+    "payment_plans", "payment_history", "refunds", "transfers", "manual_adjustments",
+  ]);
+  return supported.has(baseName) ? baseName : "payments";
+}
+
+async function parseUploadFile(file) {
+  const buffer = await file.arrayBuffer();
+  const workbook = XLSX.read(buffer, { type: "array" });
+  const isCsv = file.name.toLowerCase().endsWith(".csv");
+  const datasets = {};
+  const sheetNames = isCsv ? [workbook.SheetNames[0]] : workbook.SheetNames;
+
+  sheetNames.forEach((sheetName) => {
+    const datasetName = isCsv ? datasetNameFromFile(file.name) : sheetName;
+    datasets[datasetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+  });
+  return datasets;
+}
+
+async function runLocalImport(asOf, datasets) {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/runs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ asOf, datasets }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || "Local import could not be processed.");
+    return payload;
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("Local import API is unavailable. Start the backend on port 8000 and try again.");
+    }
+    throw error;
+  }
+}
+
 function App() {
   const [tab, setTab] = useState("dashboard");
   const [search, setSearch] = useState("");
@@ -113,6 +154,7 @@ function App() {
   const [authMessage, setAuthMessage] = useState("");
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [localRunLabel, setLocalRunLabel] = useState("Snapshot generated");
   const dashboard = activeData.dashboard;
   const forecast = activeData.forecast || { summary: {}, studentForecasts: [] };
   const leakage = activeData.leakage || { summary: {}, findings: [] };
@@ -121,6 +163,7 @@ function App() {
     if (!liveRunId) return undefined;
     return subscribeToRun(liveRunId, (snapshot) => {
       setLiveStatus(snapshot.status || "RUNNING");
+      setLocalRunLabel("");
       setActiveData((current) => {
         const nextForecast = snapshot.forecast
           ? { ...current.forecast, summary: snapshot.forecast }
@@ -172,31 +215,23 @@ function App() {
     );
   }, [activeData, search]);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
     setIsUploading(true);
     setLiveError("");
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const customData = {};
-        workbook.SheetNames.forEach((sheet) => {
-          customData[sheet] = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
-        });
-        const runId = await createFinanceRun(activeData.asOf, customData);
-        setLiveRunId(runId);
-        setLiveStatus("PENDING");
-      } catch (error) {
-        setLiveError("Failed to parse Excel file: " + error.message);
-      } finally {
-        setIsUploading(false);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      }
-    };
-    reader.readAsArrayBuffer(file);
+    try {
+      const imported = await runLocalImport(activeData.asOf, await parseUploadFile(file));
+      setLiveRunId(null);
+      setLiveStatus(null);
+      setActiveData(imported);
+      setLocalRunLabel(`Imported ${file.name}`);
+    } catch (error) {
+      setLiveError("Import failed: " + error.message);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   const requestLiveRun = async () => {
@@ -216,6 +251,14 @@ function App() {
     if (!liveRunId || !user) return;
     try { await createReviewAction(liveRunId, { targetType, targetId, decision, reviewerUid: user.uid }); setLiveError(""); }
     catch (error) { setLiveError(error.message); }
+  };
+
+  const resetLocalSnapshot = () => {
+    setLiveRunId(null);
+    setLiveStatus(null);
+    setActiveData(data);
+    setLocalRunLabel("Snapshot generated");
+    setLiveError("");
   };
 
   const selectTab = (nextTab) => {
@@ -280,10 +323,12 @@ function App() {
           <div className="runMeta">
             <LiveAuth user={user} email={email} password={password} setEmail={setEmail} setPassword={setPassword} onSignIn={signIn} onSignOut={() => signOut(auth)} authMessage={authMessage} />
             <a href="/template.xlsx" download className="runButton" style={{textDecoration: "none", color: "inherit", border: "1px solid var(--border)", padding: "0 10px"}}><FileText size={14} /> Download Template</a>
-            <input type="file" accept=".xlsx" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
-            <button type="button" className="runButton" onClick={() => fileInputRef.current?.click()} disabled={!isFirebaseConfigured || !user || isUploading}><Upload size={14} /> {isUploading ? "Uploading..." : "Upload Excel"}</button>
-            <button type="button" className="runButton" onClick={requestLiveRun} disabled={!isFirebaseConfigured || !user}><ArrowUpRight size={14} /> Run live workflow</button>
-            <StatusBadge tone={liveRunId ? "success" : "neutral"}><CheckCircle2 size={13} /> {liveRunId ? `Live ${liveStatus || "connecting"}` : "Snapshot generated"}</StatusBadge>
+            <input type="file" accept=".xlsx,.csv" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
+            <button type="button" className="runButton" onClick={() => fileInputRef.current?.click()} disabled={isUploading}><Upload size={14} /> {isUploading ? "Processing..." : "Upload data"}</button>
+            {isFirebaseConfigured
+              ? <button type="button" className="runButton" onClick={requestLiveRun} disabled={!user}><ArrowUpRight size={14} /> Run live workflow</button>
+              : <button type="button" className="quietButton" onClick={resetLocalSnapshot}><RefreshCcw size={14} /> Reset snapshot</button>}
+            <StatusBadge tone={liveRunId || localRunLabel.startsWith("Imported") ? "success" : "neutral"}><CheckCircle2 size={13} /> {liveRunId ? `Live ${liveStatus || "connecting"}` : localRunLabel}</StatusBadge>
             <span>As of {formatDate(activeData.asOf)}</span>
           </div>
         </header>
@@ -536,7 +581,7 @@ function App() {
           </section>
         )}
 
-        <footer className="pageFooter"><span><ShieldCheck size={14} /> Figures are deterministic and traceable to source records.</span><span>{liveRunId ? "Live Firestore subscriptions active" : "Local JSON demo / Firestore workflow optional"}</span></footer>
+        <footer className="pageFooter"><span><ShieldCheck size={14} /> Figures are deterministic and traceable to source records.</span><span>{liveRunId ? "Live Firestore subscriptions active" : "Local import and deterministic workflow"}</span></footer>
       </main>
     </div>
   );

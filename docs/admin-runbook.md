@@ -1,8 +1,21 @@
-﻿# FeeOps Agent – Admin Runbook
+# FeeOps Agent – Admin Runbook
 
 This document records the completed cloud setup and specifies exactly what a
 project organization-administrator must do to fully activate the
 `intern-bnmit-july-2026` project for the FeeOps agent.
+
+---
+
+## 🌐 Live Service Endpoints
+
+| Service | URL |
+|---------|-----|
+| **Cloud Run API** | https://feeops-backend-444451720807.us-central1.run.app |
+| **Swagger UI** | https://feeops-backend-444451720807.us-central1.run.app/docs |
+| **List agents** | https://feeops-backend-444451720807.us-central1.run.app/list-apps |
+
+> Deployed: 2026-08-15 · Revision: `feeops-backend-00002-zx9` · Region: `us-central1`
+> Authentication: IAM identity token required (`gcloud auth print-identity-token`)
 
 ---
 
@@ -31,7 +44,7 @@ project organization-administrator must do to fully activate the
 5. **Reviewers Firestore doc** — `reviewers/m4mzMGLpCGTWLY51GV2BoglpCsl2` written.
 6. **GitHub repository** — `https://github.com/SheeshDarth/fee-finance-agent` — branch `master` up to date.
 7. **All 7 unit tests** — passing (`test_finance_invariants.py`).
-8. **Cloud Run deploy** — `feeops-backend` deployed to `intern-bnmit-july-2026 / us-central1`.
+8. **Cloud Run deploy** — `feeops-backend` live at `https://feeops-backend-444451720807.us-central1.run.app` (revision `feeops-backend-00002-zx9`).
 
 ---
 

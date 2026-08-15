@@ -149,7 +149,7 @@ gcloud run deploy feeops-adk-api `
   --region $REGION `
   --service-account $RUNTIME `
   --no-allow-unauthenticated `
-  --set-env-vars "GCP_PROJECT_ID=$PROJECT,GCP_LOCATION=$REGION,ENABLE_LLM=true,GEMINI_MODEL=gemini-2.5-flash"
+  --set-env-vars "^@^GCP_PROJECT_ID=$PROJECT@GCP_LOCATION=$REGION@GOOGLE_CLOUD_PROJECT=$PROJECT@GOOGLE_CLOUD_LOCATION=$REGION@GOOGLE_GENAI_USE_VERTEXAI=true@ENABLE_LLM=true@GEMINI_MODEL=gemini-2.5-flash"
 
 gcloud run jobs deploy feeops-firestore-worker `
   --source backend `
@@ -158,7 +158,7 @@ gcloud run jobs deploy feeops-firestore-worker `
   --service-account $RUNTIME `
   --command python `
   --args firestore_worker.py,--once `
-  --set-env-vars "GCP_PROJECT_ID=$PROJECT,GCP_LOCATION=$REGION,ENABLE_LLM=true,GEMINI_MODEL=gemini-2.5-flash"
+  --set-env-vars "^@^GCP_PROJECT_ID=$PROJECT@GCP_LOCATION=$REGION@GOOGLE_CLOUD_PROJECT=$PROJECT@GOOGLE_CLOUD_LOCATION=$REGION@GOOGLE_GENAI_USE_VERTEXAI=true@ENABLE_LLM=true@GEMINI_MODEL=gemini-2.5-flash"
 ```
 
 The API invokes the Google ADK service. The Cloud Run Job processes only

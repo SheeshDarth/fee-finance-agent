@@ -19,6 +19,16 @@ creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 if creds and not os.path.isabs(creds):
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BACKEND_DIR / creds).resolve())
 
+# ADK uses the Google Gen AI SDK. Make the company GCP deployment select
+# Vertex AI explicitly so Cloud Run uses its attached service identity instead
+# of falling back to the Gemini Developer API and looking for an API key.
+project_id = os.getenv("GCP_PROJECT_ID", "").strip()
+location = os.getenv("GCP_LOCATION", "us-central1").strip()
+if project_id:
+    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
+os.environ.setdefault("GOOGLE_CLOUD_LOCATION", location)
+os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "true")
+
 from agent_runner import build_finance_run  # noqa: E402
 
 
@@ -91,7 +101,7 @@ def get_money_guardrail() -> str:
 
 root_agent = Agent(
     name="feeops_finance_agent",
-    model="gemini-2.5-flash",
+    model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
     description="Auditable school fee collection and reconciliation assistant.",
     instruction=(
         "You are the FeeOps finance assistant. Use run_fee_workflow for every question about "

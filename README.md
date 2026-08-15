@@ -54,7 +54,7 @@ cd ..\frontend
 npm install
 ```
 
-Set `GCP_PROJECT_ID=intern-bnmit-july-2026` in `backend/.env`. For local cloud testing, authenticate with `gcloud auth application-default login`; for Cloud Run, attach the company runtime service account. Do not create or use a service-account JSON key. Once the company Firebase Web App exists, copy its six values into ignored `frontend/.env`.
+Set `GCP_PROJECT_ID=intern-bnmit-july-2026` and `GOOGLE_GENAI_USE_VERTEXAI=true` in `backend/.env`. For local cloud testing, authenticate with `gcloud auth application-default login`; for Cloud Run, attach the company runtime service account. The ADK wrapper explicitly uses Vertex AI, not a Gemini API key. Do not create or use a service-account JSON key. Once the company Firebase Web App exists, copy its six values into ignored `frontend/.env`.
 
 ## Run the Deterministic Workflow
 

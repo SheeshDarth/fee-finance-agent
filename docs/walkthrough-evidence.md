@@ -14,7 +14,7 @@ Use this matrix as the evaluator-facing index. Every claim has a code path, visi
 | Reminder messages for ageing buckets | `reminders.py`, `assessment-evidence.md` | 0-30 polite and 31-60 firm drafts | Open Reminder drafts | DEMONSTRATED |
 | LLM cannot change money | `llm_drafter.py`, validator test, `docs/financial-controls.md` | Live Gemini wording passes exact amount/date gate | Run `--llm`, show validation fields | DEMONSTRATED |
 | Google ADK usage | `backend/feeops_adk/agent.py` | Read-only ADK tools return deterministic workflow | Run `adk web feeops_adk` or import smoke test | DEMONSTRATED LOCALLY |
-| Firebase/Firestore live path | `frontend/src/firebase.js`, `firestore.rules`, worker | Live-tested one-shot run and subscriptions | Sign in, run workflow, inspect status | DEMONSTRATED IN TEST PROJECT |
-| Company GCP deployment | `docs/company-cloud-status.md` | Project/API/billing evidence; IAM blocker called out | Show status note; do not claim deployment | PARTIAL, EXTERNAL IAM |
+| Optional Firebase/Firestore path | `frontend/src/firebase.js`, `firestore.rules`, worker | Previously tested one-shot run and subscriptions | Do not use for the company demonstration | OPTIONAL, NOT SELECTED |
+| Company GCP deployment | `backend/scripts/invoke_cloud_run_agent.ps1`, `docs/company-cloud-status.md` | Vertex-backed ADK tool calls on the private Cloud Run service | Run the PowerShell client and show the answer | DEMONSTRATED |
 | Clear communication | README, diagrams, demo script, evidence pack | One canonical 5-minute narrative | Follow `docs/demo-script.md` | DEMONSTRATED |
 | Production completeness | Limitations in README and architecture review | Explicit out-of-scope boundary | State limitations at close | N/A BY DESIGN |

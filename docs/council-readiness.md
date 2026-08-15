@@ -4,9 +4,9 @@ The five-advisor council reviewed the repository, assessment requirements, cloud
 
 ## Verdict
 
-**Ready for a strong, scoped technical assessment walkthrough.** The prototype demonstrates a practical AI workflow, deterministic financial handling, modular code, usable dashboard output, Google ADK integration, live Gemini wording, and a live-tested Firebase/Firestore path.
+**Ready for a strong, scoped technical assessment walkthrough.** The prototype demonstrates a practical AI workflow, deterministic financial handling, modular code, usable local dashboard output, Google ADK integration, and a live-validated Vertex AI Cloud Run agent.
 
-**Not ready to claim production completion or verified deployment into `intern-bnmit-july-2026`.** The supplied company project still needs administrator permission for Firebase registration and Firestore creation, a company-project service identity, ADC or CI credentials, and the managed Agent Runtime deployment test.
+**Not ready to claim production completion.** The supplied company project has a verified Cloud Run ADK deployment, but still needs a least-privilege runtime identity, persistent company data source, scheduled execution, and multi-user reviewer workflow. Firebase is intentionally not selected.
 
 ## What The Council Found Strong
 
@@ -26,8 +26,8 @@ The five-advisor council reviewed the repository, assessment requirements, cloud
 5. Show two ageing-bucket reminder drafts and their exact amount/date validation.
 6. Run `--llm` and show `generationSource: GEMINI` plus `validationPassed: true`.
 7. Open ADK locally and explain that its tools are read-only.
-8. Show Firebase/Firestore status using the live-tested `test1-457903` project.
-9. Close with the company-project status and explicit limitations.
+8. Run `backend/scripts/invoke_cloud_run_agent.ps1` and show the live Vertex tool call.
+9. Close with the no-Firebase operating decision and explicit limitations.
 
 ## Evidence Checklist
 

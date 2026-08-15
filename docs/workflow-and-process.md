@@ -5,7 +5,7 @@ This is the single process file for running and demonstrating the assessment pro
 ## A. One-Time Setup
 
 1. Install Google Cloud SDK, Node.js, and Python.
-2. Authenticate the supplied company project, `intern-bnmit-july-2026`. Firebase registration, Native Firestore, and a Web App must exist before the live reviewer path can run:
+2. Authenticate the supplied company project, `intern-bnmit-july-2026`:
    ~~~powershell
    gcloud auth login
    gcloud config set project intern-bnmit-july-2026
@@ -19,11 +19,8 @@ This is the single process file for running and demonstrating the assessment pro
    .\venv\Scripts\Activate.ps1
    pip install -r requirements.txt
    ~~~
-5. Copy `.env.example` to `.env` and set the company project, location, and model. Copy the company Firebase Web App values to ignored `frontend/.env`.
-6. Deploy the reviewed rules after Firestore exists:
-   ~~~powershell
-   firebase deploy --only firestore:rules
-   ~~~
+5. Copy `.env.example` to `.env` and set the company project, location, and model. Leave `frontend/.env` absent: the selected dashboard mode is local and deterministic.
+6. Read [no-firebase-operating-mode.md](no-firebase-operating-mode.md). It is the canonical company deployment decision; the Firestore path is not required.
 
 ## B. Deterministic Assessment Run
 
@@ -69,25 +66,25 @@ Open the displayed Vite URL and show, in order:
 6. Audit trail: approved concessions, waiver, payment plan, reconciliations, forecasts, control findings, decisions, drafts, and run completion.
 7. Mobile layout: wrapped navigation, stacked controls, and scroll-contained tables.
 
-## D. Live Firestore Demonstration
+## D. Live Cloud Run Agent Demonstration
 
-For `intern-bnmit-july-2026`, complete `docs/company-cloud-deployment.md` before the live run:
+The Cloud Run backend is intentionally IAM-protected. Use the supplied local client instead of exposing the agent to an unauthenticated browser:
 
-1. Create a reviewer account.
-2. Add reviewers/{uid} with active: true.
-3. Deploy the `feeops-firestore-worker` Cloud Run Job, then run it after the reviewer requests a live run:
-   ~~~powershell
-   gcloud run jobs execute feeops-firestore-worker --project intern-bnmit-july-2026 --region us-central1 --wait
-   ~~~
-4. Open the dashboard and sign in.
-5. Click Run live workflow.
-6. Observe PENDING -> RUNNING -> AWAITING_REVIEW.
-7. Use Payment review to record a reviewer action.
-8. Verify review_actions/{actionId} and REVIEW_ACTION_APPLIED in the audit events.
+~~~powershell
+gcloud auth login
+gcloud config set project intern-bnmit-july-2026
+.\backend\scripts\invoke_cloud_run_agent.ps1
+~~~
+
+1. The script obtains a short-lived IAM identity token from `gcloud`.
+2. It creates a disposable `feeops_adk` session.
+3. Gemini on Vertex AI selects the relevant evidence tools.
+4. The script prints a grounded final answer.
+5. Show that no API key, Firebase configuration, or service-account JSON key is present.
 
 ## E. Live Gemini Demonstration
 
-For the company project, deploy the ADK API with an attached runtime identity that has Vertex AI User before running:
+For local wording validation, use Application Default Credentials. The deployed ADK API already uses its attached identity and is demonstrated in section D:
 
 ~~~powershell
 cd backend

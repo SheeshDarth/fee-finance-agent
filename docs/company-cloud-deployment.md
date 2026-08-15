@@ -1,8 +1,11 @@
 # Company Cloud Run Deployment
 
-This is the only deployment runbook for FeeOps. All application resources must
-use the company project `intern-bnmit-july-2026` in `us-central1`. Do not reuse
-the earlier personal Firebase project or any downloaded JSON key.
+This is the optional Firebase/Firestore deployment runbook retained for
+reference. It is not the selected company path: the administrator has chosen
+the Cloud Run-only approach described in [no-firebase-operating-mode.md](no-firebase-operating-mode.md).
+If this legacy path is ever approved, all application resources must use the
+company project `intern-bnmit-july-2026` in `us-central1`. Do not reuse the
+earlier personal Firebase project or any downloaded JSON key.
 
 ## Current prerequisite status
 

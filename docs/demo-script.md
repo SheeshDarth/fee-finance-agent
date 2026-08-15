@@ -37,23 +37,20 @@ Expected dashboard figures:
 
 State that Python calculates all money in integer paise. Gemini, when enabled, receives the already-calculated amount and due date only to word a message. The validator rejects any changed or invented monetary figure or date. Reminders are drafts and are never sent automatically.
 
-## 4. Optional Live Demonstration
+## 4. Live Cloud Run Agent Demonstration
 
-1. Use the company project `intern-bnmit-july-2026` only after Firebase registration, Native Firestore, Email/Password Authentication, the Web App values, and rules deployment are complete.
-2. Create a reviewer user.
-3. Add \`reviewers/{uid}\` with \`active: true\` in Firestore.
-4. Copy Firebase web values into \`frontend/.env\`.
-5. Execute the deployed Cloud Run worker job:
+1. Keep the React dashboard in local demo mode; do not add Firebase configuration.
+2. Sign in to the company GCP project with `gcloud auth login`.
+3. Run:
 
 \`\`\`powershell
-gcloud run jobs execute feeops-firestore-worker --project intern-bnmit-july-2026 --region us-central1 --wait
+.\backend\scripts\invoke_cloud_run_agent.ps1
 \`\`\`
 
-6. Sign in in the dashboard and click **Run live workflow**.
-7. Show the Firestore-backed status changing from \`PENDING\` to \`RUNNING\` and then \`AWAITING_REVIEW\`.
-8. Open Payment review and record a reviewer action. Show the new action and audit event.
-9. For Gemini wording, run `python agent_runner.py --as-of 2026-08-13 --llm` with company ADC, or ask the deployed ADK API to draft a reminder. Gemini drafts must pass the same deterministic validator; if Vertex AI is unavailable, the deterministic fallback is safe and visibly labeled.
+4. Explain that the script invokes the private Cloud Run ADK API using a short-lived IAM identity token.
+5. Point out the tools selected by Gemini: cash forecast and leakage findings. Their monetary facts originate in deterministic Python, so the model only explains returned evidence.
+6. For reminder wording, run `python agent_runner.py --as-of 2026-08-13 --llm` with ADC. The same exact amount-and-date validator applies.
 
 ## 5. What Is Still External
 
-The source code and local assessment workflow are complete. Live company validation still depends on Firebase registration, Firestore creation, a company runtime identity, reviewer-user creation, Cloud Run worker deployment, and one recorded live run. These external steps require the documented company IAM access and are intentionally not represented by fake local data.
+The source code, local dashboard, and live Cloud Run ADK validation are complete. Firebase/Firestore is deliberately not part of the company deployment. There is not yet a persistent company data store, scheduled job, browser-to-private-API proxy, or production reviewer workflow; these are documented honestly in `docs/no-firebase-operating-mode.md`.

@@ -19,11 +19,11 @@ Audited against the supplied Subhanu Technologies Fee Collection & Finance Agent
 | Auditable reminders, waivers, plans, and approving authority | Audit events include reminder creation, WAIVER_APPROVED, PAYMENT_PLAN_APPROVED, and concession approvals | PASS |
 | Google ADK 2.0 or justified equivalent | `backend/feeops_adk/agent.py`, agent-framework.md | PASS |
 | Optional demo video | Not required; demo-script.md is provided instead | N/A |
-| Firebase/Firestore live path | Existing test project was live-tested; company project is billing-enabled but awaits Firebase registration/database permission | PARTIAL: one-time company IAM/console setup remains |
-| Live Gemini | Live Gemini wording run succeeded in `test1-457903`; deterministic validation remains mandatory | PASS for assessment project; company-project key/deployment remain pending |
+| Firebase/Firestore live path | Optional code remains available but the company administrator selected a no-Firebase deployment | N/A by company deployment decision |
+| Live Gemini / ADK | `feeops-backend-00007-tl4` selected evidence tools through Vertex AI in the company project; deterministic validation remains mandatory | PASS |
 | Reminder sending | Explicitly not implemented per assignment rule | N/A by design |
 | Production deployment, bank imports, next-month forecasting | Documented limitations; outside the 3-hour assessment scope | N/A by design |
 
 ## Verdict
 
-The assessment deliverables are complete and evidenced. The Firebase and Gemini paths are live-tested in `test1-457903` with Blaze billing enabled. The separate company project is billing-enabled but still externally blocked by Firebase/Firestore IAM and has not been claimed as deployed. The deterministic local workflow remains the reproducible fallback.
+The assessment deliverables are complete and evidenced. The deterministic local dashboard is the selected frontend path, and the company Cloud Run ADK agent is live-validated through Vertex AI. Firebase/Firestore is an optional legacy integration, not a company-project dependency. The local workflow remains the reproducible dashboard path.

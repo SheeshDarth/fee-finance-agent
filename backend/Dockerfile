@@ -12,4 +12,4 @@ COPY feeops_adk ./feeops_adk
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8080
 
-CMD ["adk", "api_server", "feeops_adk", "--host", "0.0.0.0", "--port", "8080", "--no-reload", "--a2a", "--use_local_storage"]
+CMD ["adk", "api_server", "feeops_adk", "--host", "0.0.0.0", "--port", "8080", "--no-reload", "--use_local_storage"]

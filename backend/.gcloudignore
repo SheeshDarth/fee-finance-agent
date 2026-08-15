@@ -1,0 +1,35 @@
+# This file specifies what NOT to upload to Cloud Build / Cloud Run source deploy.
+# Without this, the 723 MB venv/ would be uploaded every time.
+
+.gcloudignore
+.git
+.gitignore
+
+# Python virtual environment — always excluded; Docker builds its own
+venv/
+.venv/
+env/
+
+# Compiled Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Local secrets — never upload
+service-account*.json
+*.env
+.env*
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+*.log
+
+# Editor / OS
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db

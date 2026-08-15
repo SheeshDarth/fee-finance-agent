@@ -20,6 +20,7 @@ This repository is a working assessment prototype with a deterministic local das
 - [Cloud provenance](docs/company-cloud-status.md)
 - [No-Firebase operating mode](docs/no-firebase-operating-mode.md)
 - [Local CSV and Excel import](docs/local-import.md)
+- [Complete presentation guide](docs/presentation-guide.md)
 
 ## Repository Layout
 

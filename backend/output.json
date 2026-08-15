@@ -782,15 +782,15 @@
       "ageingBucket": "31-60",
       "tone": "firm but respectful reminder",
       "status": "DRAFT_FOR_REVIEW",
-      "message": "Dear Mr. Rakesh Sharma, This is a friendly reminder regarding the outstanding school fees for Aarav Sharma. The amount due is Rs. 13,700, which was originally due on 2026-06-15. We kindly request your prompt attention to this matter. Thank you.",
-      "generationSource": "GEMINI",
-      "model": "Gemini",
-      "generationError": null,
+      "message": "Dear Mr. Rakesh Sharma, this is a firm but respectful reminder for Aarav Sharma's school fee balance of Rs. 13,700. The instalment was due on 2026-06-15 and is now 59 days overdue. Please treat this as a draft notice for accounts-office review before any parent communication is sent.",
+      "generationSource": "DETERMINISTIC_FALLBACK",
+      "model": null,
+      "generationError": "HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by NewConnectionError(\"HTTPSConnection(host='oauth2.googleapis.com', port=443): Failed to establish a new connection: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions\"))",
       "dueDate": "2026-06-15",
       "amount": "Rs. 13,700",
       "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",
       "validationPassed": true,
-      "validationNote": "Gemini wording passed deterministic amount and due-date validation."
+      "validationNote": "Deterministic template passed amount and due-date validation."
     },
     {
       "studentId": "S002",
@@ -799,22 +799,293 @@
       "ageingBucket": "0-30",
       "tone": "polite reminder",
       "status": "DRAFT_FOR_REVIEW",
-      "message": "Dear Ms. Kavita Iyer, This is a friendly reminder regarding the outstanding school fees for Meera Iyer. The amount due is Rs. 5,285, which was due on 2026-07-20. We kindly request you to settle this amount at your earliest convenience. Thank you for your attention to this matter. Sincerely, Accounts Office",
-      "generationSource": "GEMINI",
-      "model": "Gemini",
-      "generationError": null,
+      "message": "Dear Ms. Kavita Iyer, this is a polite reminder for Meera Iyer's school fee balance of Rs. 5,285. The instalment was due on 2026-07-20 and is now 24 days overdue. Please treat this as a draft notice for accounts-office review before any parent communication is sent.",
+      "generationSource": "DETERMINISTIC_FALLBACK",
+      "model": null,
+      "generationError": "HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by NewConnectionError(\"HTTPSConnection(host='oauth2.googleapis.com', port=443): Failed to establish a new connection: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions\"))",
       "dueDate": "2026-07-20",
       "amount": "Rs. 5,285",
       "llmGuardrail": "Amounts and due dates are supplied from ledger output; generated text is rejected if it changes either value.",
       "validationPassed": true,
-      "validationNote": "Gemini wording passed deterministic amount and due-date validation."
+      "validationNote": "Deterministic template passed amount and due-date validation."
+    }
+  ],
+  "forecast": {
+    "summary": {
+      "model": "EMPIRICAL_HISTORY_BLEND_V1",
+      "asOf": "2026-08-13",
+      "horizonDays": 30,
+      "horizonEnd": "2026-09-12",
+      "historicalRecordCount": 5,
+      "forecastConfidence": "LOW",
+      "expectedCashInflowPaise": 1534682,
+      "expectedCashInflow": "Rs. 15,346.82",
+      "expectedOutstandingPaise": 5048818,
+      "expectedOutstanding": "Rs. 50,488.18",
+      "projectedCollectionRateBps": 5838,
+      "projectedCollectionRatePercent": 58.4,
+      "likelyDelayStudentIds": [
+        "S003",
+        "S002",
+        "S001"
+      ],
+      "limitation": "Planning estimate only. The demo has sparse payment history; it is not a statistical guarantee or an annual-budget forecast."
+    },
+    "studentForecasts": [
+      {
+        "studentId": "S001",
+        "studentName": "Aarav Sharma",
+        "class": "8A",
+        "forecastableOutstandingPaise": 1370000,
+        "forecastableOutstanding": "Rs. 13,700",
+        "historicalRecordCount": 2,
+        "recoveryRateBps": 8501,
+        "recoveryRatePercent": 85.0,
+        "timingAdjustmentBps": 8500,
+        "expectedCollectionPaise": 989941,
+        "expectedCollection": "Rs. 9,899.41",
+        "delayRisk": "MEDIUM",
+        "reason": "2 history record(s); blended recovery rate 85% and timing adjustment 85% based on payment behaviour."
+      },
+      {
+        "studentId": "S002",
+        "studentName": "Meera Iyer",
+        "class": "7B",
+        "forecastableOutstandingPaise": 528500,
+        "forecastableOutstanding": "Rs. 5,285",
+        "historicalRecordCount": 1,
+        "recoveryRateBps": 7101,
+        "recoveryRatePercent": 71.0,
+        "timingAdjustmentBps": 6500,
+        "expectedCollectionPaise": 243937,
+        "expectedCollection": "Rs. 2,439.37",
+        "delayRisk": "MEDIUM",
+        "reason": "1 history record(s); blended recovery rate 71% and timing adjustment 65% based on payment behaviour."
+      },
+      {
+        "studentId": "S003",
+        "studentName": "Kabir Khan",
+        "class": "8A",
+        "forecastableOutstandingPaise": 2885000,
+        "forecastableOutstanding": "Rs. 28,850",
+        "historicalRecordCount": 1,
+        "recoveryRateBps": 2979,
+        "recoveryRatePercent": 29.8,
+        "timingAdjustmentBps": 3500,
+        "expectedCollectionPaise": 300804,
+        "expectedCollection": "Rs. 3,008.04",
+        "delayRisk": "HIGH",
+        "reason": "1 history record(s); blended recovery rate 30% and timing adjustment 35% based on payment behaviour."
+      },
+      {
+        "studentId": "S004",
+        "studentName": "Diya Nair",
+        "class": "6C",
+        "forecastableOutstandingPaise": 0,
+        "forecastableOutstanding": "Rs. 0",
+        "historicalRecordCount": 1,
+        "recoveryRateBps": 8430,
+        "recoveryRatePercent": 84.3,
+        "timingAdjustmentBps": 10000,
+        "expectedCollectionPaise": 0,
+        "expectedCollection": "Rs. 0",
+        "delayRisk": "LOW",
+        "reason": "1 history record(s); blended recovery rate 84% and timing adjustment 100% based on payment behaviour."
+      }
+    ]
+  },
+  "leakage": {
+    "summary": {
+      "asOf": "2026-08-13",
+      "findingCount": 5,
+      "highSeverityCount": 4,
+      "mediumSeverityCount": 1,
+      "amountAtRiskPaise": 4950000,
+      "amountAtRisk": "Rs. 49,500",
+      "status": "REVIEW_REQUIRED",
+      "limitation": "Control findings are exception signals, not proof of loss. Overlapping source records are de-duplicated only when the source set is identical."
+    },
+    "findings": [
+      {
+        "findingId": "LEAK-ADJUSTMENT-A001",
+        "category": "UNAPPROVED_MANUAL_ADJUSTMENT",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 150000,
+        "affectedAmount": "Rs. 1,500",
+        "reason": "A manual adjustment lacks recorded approving authority.",
+        "recommendation": "Do not apply the adjustment until an authorised reviewer supplies evidence.",
+        "sourceReferences": [
+          "A001"
+        ]
+      },
+      {
+        "findingId": "LEAK-PAYMENT-P004",
+        "category": "UNRECONCILED_PAYMENT",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": null,
+        "affectedAmountPaise": 900000,
+        "affectedAmount": "Rs. 9,000",
+        "reason": "P004 is NEEDS_REVIEW and is excluded from verified collections. No invoice reference, student ID, or reliable narration match found.",
+        "recommendation": "Confirm or reject the payment allocation before posting it to the ledger.",
+        "sourceReferences": [
+          "P004"
+        ]
+      },
+      {
+        "findingId": "LEAK-REFUND-AUTH-R001",
+        "category": "UNAPPROVED_REFUND",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 350000,
+        "affectedAmount": "Rs. 3,500",
+        "reason": "A refund record has no approving authority.",
+        "recommendation": "Hold the refund until an authorised reviewer verifies the reason and payment evidence.",
+        "sourceReferences": [
+          "R001",
+          "P005"
+        ]
+      },
+      {
+        "findingId": "LEAK-TRANSFER-T001",
+        "category": "BILLING_AFTER_TRANSFER",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 2550000,
+        "affectedAmount": "Rs. 25,500",
+        "reason": "Fee items remain due after a completed student transfer.",
+        "recommendation": "Verify enrolment status and reverse or hold post-transfer billing before collection contact.",
+        "sourceReferences": [
+          "T001",
+          "F007",
+          "F008"
+        ]
+      },
+      {
+        "findingId": "LEAK-PAYMENT-P003",
+        "category": "UNRECONCILED_PAYMENT",
+        "severity": "MEDIUM",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S003",
+        "affectedAmountPaise": 1000000,
+        "affectedAmount": "Rs. 10,000",
+        "reason": "P003 is POSSIBLE and is excluded from verified collections. Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided.",
+        "recommendation": "Confirm or reject the payment allocation before posting it to the ledger.",
+        "sourceReferences": [
+          "P003"
+        ]
+      }
+    ]
+  },
+  "agentDecisions": [
+    {
+      "studentId": "S001",
+      "studentName": "Aarav Sharma",
+      "ageingBucket": "31-60",
+      "outstandingPaise": 3170000,
+      "outstanding": "Rs. 31,700",
+      "requiresHumanReview": false,
+      "relatedPaymentIds": [],
+      "chosenAction": "DRAFT_REMINDER",
+      "reason": "The balance is overdue in the 31-60 bucket, has no approved plan, and has no unresolved payment match. A validated draft is ready for human review."
+    },
+    {
+      "studentId": "S002",
+      "studentName": "Meera Iyer",
+      "ageingBucket": "0-30",
+      "outstandingPaise": 528500,
+      "outstanding": "Rs. 5,285",
+      "requiresHumanReview": false,
+      "relatedPaymentIds": [],
+      "chosenAction": "DRAFT_REMINDER",
+      "reason": "The balance is overdue in the 0-30 bucket, has no approved plan, and has no unresolved payment match. A validated draft is ready for human review."
+    },
+    {
+      "studentId": "S003",
+      "studentName": "Kabir Khan",
+      "ageingBucket": "60+",
+      "outstandingPaise": 2885000,
+      "outstanding": "Rs. 28,850",
+      "requiresHumanReview": true,
+      "relatedPaymentIds": [
+        "P003"
+      ],
+      "chosenAction": "ESCALATE_FOR_REVIEW",
+      "reason": "Payment P003 requires reconciliation review. No reminder is advanced until that evidence is resolved."
+    },
+    {
+      "studentId": "S004",
+      "studentName": "Diya Nair",
+      "ageingBucket": "NOT_OVERDUE",
+      "outstandingPaise": 0,
+      "outstanding": "Rs. 0",
+      "requiresHumanReview": true,
+      "relatedPaymentIds": [],
+      "chosenAction": "ESCALATE_FOR_REVIEW",
+      "relatedControlFindingIds": [
+        "LEAK-ADJUSTMENT-A001",
+        "LEAK-REFUND-AUTH-R001",
+        "LEAK-TRANSFER-T001"
+      ],
+      "reason": "Unapproved Manual Adjustment requires a finance-control review. Collection contact and record changes remain blocked until it is resolved."
+    }
+  ],
+  "escalations": [
+    {
+      "escalationId": "PAYMENT-P003",
+      "targetType": "PAYMENT",
+      "targetId": "P003",
+      "studentId": "S003",
+      "priority": "MEDIUM",
+      "status": "PENDING_HUMAN_REVIEW",
+      "reason": "P003 is POSSIBLE and cannot reduce verified collections until a reviewer confirms it. Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided."
+    },
+    {
+      "escalationId": "PAYMENT-P004",
+      "targetType": "PAYMENT",
+      "targetId": "P004",
+      "studentId": null,
+      "priority": "HIGH",
+      "status": "PENDING_HUMAN_REVIEW",
+      "reason": "P004 is NEEDS_REVIEW and cannot reduce verified collections until a reviewer confirms it. No invoice reference, student ID, or reliable narration match found."
+    },
+    {
+      "escalationId": "LEAK-ADJUSTMENT-A001",
+      "targetType": "CONTROL_FINDING",
+      "targetId": "LEAK-ADJUSTMENT-A001",
+      "studentId": "S004",
+      "priority": "HIGH",
+      "status": "PENDING_HUMAN_REVIEW",
+      "reason": "A manual adjustment lacks recorded approving authority."
+    },
+    {
+      "escalationId": "LEAK-REFUND-AUTH-R001",
+      "targetType": "CONTROL_FINDING",
+      "targetId": "LEAK-REFUND-AUTH-R001",
+      "studentId": "S004",
+      "priority": "HIGH",
+      "status": "PENDING_HUMAN_REVIEW",
+      "reason": "A refund record has no approving authority."
+    },
+    {
+      "escalationId": "LEAK-TRANSFER-T001",
+      "targetType": "CONTROL_FINDING",
+      "targetId": "LEAK-TRANSFER-T001",
+      "studentId": "S004",
+      "priority": "HIGH",
+      "status": "PENDING_HUMAN_REVIEW",
+      "reason": "Fee items remain due after a completed student transfer."
     }
   ],
   "auditEvents": [
     {
       "eventType": "FINANCE_RUN_STARTED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "asOf": "2026-08-13"
       }
@@ -822,7 +1093,7 @@
     {
       "eventType": "CONCESSION_APPROVED",
       "actor": "Principal",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "concessionId": "C001",
         "studentId": "S001",
@@ -835,7 +1106,7 @@
     {
       "eventType": "CONCESSION_APPROVED",
       "actor": "Trust Office",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "concessionId": "C002",
         "studentId": "S002",
@@ -848,7 +1119,7 @@
     {
       "eventType": "WAIVER_APPROVED",
       "actor": "Principal",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "waiverId": "W001",
         "studentId": "S003",
@@ -861,7 +1132,7 @@
     {
       "eventType": "PAYMENT_PLAN_APPROVED",
       "actor": "Accounts Head",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "planId": "PP001",
         "studentId": "S003",
@@ -895,7 +1166,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "paymentId": "P001",
         "amountPaise": 1500000,
@@ -911,7 +1182,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "paymentId": "P002",
         "amountPaise": 1500000,
@@ -927,7 +1198,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "paymentId": "P003",
         "amountPaise": 1000000,
@@ -943,7 +1214,7 @@
     {
       "eventType": "PAYMENT_REQUIRES_REVIEW",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "paymentId": "P004",
         "amountPaise": 900000,
@@ -959,7 +1230,7 @@
     {
       "eventType": "PAYMENT_RECONCILED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.328855+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "paymentId": "P005",
         "amountPaise": 2550000,
@@ -975,7 +1246,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.329377+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "studentId": "S001",
         "outstandingPaise": 3170000,
@@ -1000,7 +1271,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.329377+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "studentId": "S002",
         "outstandingPaise": 528500,
@@ -1024,7 +1295,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.329377+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "studentId": "S003",
         "outstandingPaise": 2885000,
@@ -1050,7 +1321,7 @@
     {
       "eventType": "STUDENT_POSITION_CALCULATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:51:57.329377+00:00",
+      "timestamp": "2026-08-15T07:03:12.663217+00:00",
       "details": {
         "studentId": "S004",
         "outstandingPaise": 0,
@@ -1072,7 +1343,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:52:12.256045+00:00",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
       "details": {
         "studentId": "S001",
         "status": "DRAFT_FOR_REVIEW",
@@ -1082,7 +1353,7 @@
     {
       "eventType": "REMINDER_DRAFT_CREATED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:52:12.256045+00:00",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
       "details": {
         "studentId": "S002",
         "status": "DRAFT_FOR_REVIEW",
@@ -1090,19 +1361,237 @@
       }
     },
     {
+      "eventType": "CASH_FORECAST_GENERATED",
+      "actor": "forecasting-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "model": "EMPIRICAL_HISTORY_BLEND_V1",
+        "asOf": "2026-08-13",
+        "horizonDays": 30,
+        "horizonEnd": "2026-09-12",
+        "historicalRecordCount": 5,
+        "forecastConfidence": "LOW",
+        "expectedCashInflowPaise": 1534682,
+        "expectedCashInflow": "Rs. 15,346.82",
+        "expectedOutstandingPaise": 5048818,
+        "expectedOutstanding": "Rs. 50,488.18",
+        "projectedCollectionRateBps": 5838,
+        "projectedCollectionRatePercent": 58.4,
+        "likelyDelayStudentIds": [
+          "S003",
+          "S002",
+          "S001"
+        ],
+        "limitation": "Planning estimate only. The demo has sparse payment history; it is not a statistical guarantee or an annual-budget forecast."
+      }
+    },
+    {
+      "eventType": "LEAKAGE_FINDING_DETECTED",
+      "actor": "leakage-control-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "findingId": "LEAK-ADJUSTMENT-A001",
+        "category": "UNAPPROVED_MANUAL_ADJUSTMENT",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 150000,
+        "affectedAmount": "Rs. 1,500",
+        "reason": "A manual adjustment lacks recorded approving authority.",
+        "recommendation": "Do not apply the adjustment until an authorised reviewer supplies evidence.",
+        "sourceReferences": [
+          "A001"
+        ]
+      }
+    },
+    {
+      "eventType": "LEAKAGE_FINDING_DETECTED",
+      "actor": "leakage-control-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "findingId": "LEAK-PAYMENT-P004",
+        "category": "UNRECONCILED_PAYMENT",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": null,
+        "affectedAmountPaise": 900000,
+        "affectedAmount": "Rs. 9,000",
+        "reason": "P004 is NEEDS_REVIEW and is excluded from verified collections. No invoice reference, student ID, or reliable narration match found.",
+        "recommendation": "Confirm or reject the payment allocation before posting it to the ledger.",
+        "sourceReferences": [
+          "P004"
+        ]
+      }
+    },
+    {
+      "eventType": "LEAKAGE_FINDING_DETECTED",
+      "actor": "leakage-control-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "findingId": "LEAK-REFUND-AUTH-R001",
+        "category": "UNAPPROVED_REFUND",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 350000,
+        "affectedAmount": "Rs. 3,500",
+        "reason": "A refund record has no approving authority.",
+        "recommendation": "Hold the refund until an authorised reviewer verifies the reason and payment evidence.",
+        "sourceReferences": [
+          "R001",
+          "P005"
+        ]
+      }
+    },
+    {
+      "eventType": "LEAKAGE_FINDING_DETECTED",
+      "actor": "leakage-control-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "findingId": "LEAK-TRANSFER-T001",
+        "category": "BILLING_AFTER_TRANSFER",
+        "severity": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S004",
+        "affectedAmountPaise": 2550000,
+        "affectedAmount": "Rs. 25,500",
+        "reason": "Fee items remain due after a completed student transfer.",
+        "recommendation": "Verify enrolment status and reverse or hold post-transfer billing before collection contact.",
+        "sourceReferences": [
+          "T001",
+          "F007",
+          "F008"
+        ]
+      }
+    },
+    {
+      "eventType": "LEAKAGE_FINDING_DETECTED",
+      "actor": "leakage-control-tool",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "findingId": "LEAK-PAYMENT-P003",
+        "category": "UNRECONCILED_PAYMENT",
+        "severity": "MEDIUM",
+        "status": "PENDING_HUMAN_REVIEW",
+        "studentId": "S003",
+        "affectedAmountPaise": 1000000,
+        "affectedAmount": "Rs. 10,000",
+        "reason": "P003 is POSSIBLE and is excluded from verified collections. Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided.",
+        "recommendation": "Confirm or reject the payment allocation before posting it to the ledger.",
+        "sourceReferences": [
+          "P003"
+        ]
+      }
+    },
+    {
+      "eventType": "REMINDER_DECISION_MADE",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "studentId": "S001",
+        "action": "DRAFT_REMINDER",
+        "reason": "The balance is overdue in the 31-60 bucket, has no approved plan, and has no unresolved payment match. A validated draft is ready for human review."
+      }
+    },
+    {
+      "eventType": "REMINDER_DECISION_MADE",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "studentId": "S002",
+        "action": "DRAFT_REMINDER",
+        "reason": "The balance is overdue in the 0-30 bucket, has no approved plan, and has no unresolved payment match. A validated draft is ready for human review."
+      }
+    },
+    {
+      "eventType": "CASE_ESCALATED_FOR_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "escalationId": "PAYMENT-P003",
+        "targetType": "PAYMENT",
+        "targetId": "P003",
+        "studentId": "S003",
+        "priority": "MEDIUM",
+        "status": "PENDING_HUMAN_REVIEW",
+        "reason": "P003 is POSSIBLE and cannot reduce verified collections until a reviewer confirms it. Narration overlaps with Kabir Khan or guardian tokens ['khan'], but no invoice reference was provided."
+      }
+    },
+    {
+      "eventType": "CASE_ESCALATED_FOR_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "escalationId": "PAYMENT-P004",
+        "targetType": "PAYMENT",
+        "targetId": "P004",
+        "studentId": null,
+        "priority": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "reason": "P004 is NEEDS_REVIEW and cannot reduce verified collections until a reviewer confirms it. No invoice reference, student ID, or reliable narration match found."
+      }
+    },
+    {
+      "eventType": "CASE_ESCALATED_FOR_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "escalationId": "LEAK-ADJUSTMENT-A001",
+        "targetType": "CONTROL_FINDING",
+        "targetId": "LEAK-ADJUSTMENT-A001",
+        "studentId": "S004",
+        "priority": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "reason": "A manual adjustment lacks recorded approving authority."
+      }
+    },
+    {
+      "eventType": "CASE_ESCALATED_FOR_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "escalationId": "LEAK-REFUND-AUTH-R001",
+        "targetType": "CONTROL_FINDING",
+        "targetId": "LEAK-REFUND-AUTH-R001",
+        "studentId": "S004",
+        "priority": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "reason": "A refund record has no approving authority."
+      }
+    },
+    {
+      "eventType": "CASE_ESCALATED_FOR_REVIEW",
+      "actor": "fee-agent-runner",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
+      "details": {
+        "escalationId": "LEAK-TRANSFER-T001",
+        "targetType": "CONTROL_FINDING",
+        "targetId": "LEAK-TRANSFER-T001",
+        "studentId": "S004",
+        "priority": "HIGH",
+        "status": "PENDING_HUMAN_REVIEW",
+        "reason": "Fee items remain due after a completed student transfer."
+      }
+    },
+    {
       "eventType": "FINANCE_RUN_COMPLETED",
       "actor": "fee-agent-runner",
-      "timestamp": "2026-08-14T17:52:12.256045+00:00",
+      "timestamp": "2026-08-15T07:03:15.438042+00:00",
       "details": {
         "studentCount": 4,
         "reconciliationCount": 5,
-        "draftCount": 2
+        "draftCount": 2,
+        "decisionCount": 4,
+        "escalationCount": 5
       }
     }
   ],
   "notes": {
     "moneyGuardrail": "All amounts are derived by deterministic Python code using integer paise. The reminder generator is allowed to word messages only.",
     "demoMode": "Local JSON seed data is the default so the assessment demo does not depend on cloud connectivity.",
-    "llmMode": "Gemini is optional; when enabled it can word reminders only, and deterministic validation rejects changed amounts or due dates."
+    "llmMode": "Gemini is optional; when enabled it can word reminders only, and deterministic validation rejects changed amounts or due dates.",
+    "agentDecisionPolicy": "The deterministic workflow chooses only DRAFT_REMINDER, ESCALATE_FOR_REVIEW, or SKIP_PAID_OR_PLAN. Drafts remain human-review only.",
+    "forecastPolicy": "Cash forecasts are deterministic planning estimates from payment history. They never alter ledger totals, collection targets, or parent communication.",
+    "leakagePolicy": "Leakage findings are exception signals that create a review queue. They never reverse fees, refunds, concessions, or payments automatically."
   }
 }

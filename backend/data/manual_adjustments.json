@@ -1,0 +1,10 @@
+[
+  {
+    "adjustmentId": "A001",
+    "studentId": "S004",
+    "date": "2026-08-12",
+    "amountPaise": -150000,
+    "reason": "Demo manual adjustment awaiting authority",
+    "approvedBy": null
+  }
+]

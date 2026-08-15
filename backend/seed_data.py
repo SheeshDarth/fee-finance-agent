@@ -23,6 +23,9 @@ def load_seed_data() -> dict[str, list[dict[str, Any]]]:
         "payments": load_json("payments.json"),
         "payment_plans": load_json("payment_plans.json"),
         "payment_history": load_json("payment_history.json"),
+        "refunds": load_json("refunds.json"),
+        "transfers": load_json("transfers.json"),
+        "manual_adjustments": load_json("manual_adjustments.json"),
     }
 
 

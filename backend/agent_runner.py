@@ -14,6 +14,8 @@ except ImportError:
         return False
 
 from ledger import build_worklist, calculate_positions
+from forecasting import build_cash_forecast
+from leakage import detect_fee_leakage
 from reconciliation import reconcile_payments
 from reminders import draft_reminders
 from seed_data import load_seed_data, write_output
@@ -31,9 +33,138 @@ def audit_event(event_type: str, details: dict[str, Any], actor: str = "fee-agen
     }
 
 
-def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[str, Any]:
+def build_agent_decisions(
+    positions: list[dict[str, Any]],
+    reconciliation_results: list[dict[str, Any]],
+    leakage_findings: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Choose the next safe workflow action from deterministic finance facts.
+
+    Decisions route cases to a draft or a human queue only. They do not change the
+    ledger, approve a payment, or send a parent-facing message.
+    """
+    review_payments = [row for row in reconciliation_results if row.get("requiresHumanReview")]
+    reviews_by_student: dict[str, list[dict[str, Any]]] = {}
+    leakage_by_student: dict[str, list[dict[str, Any]]] = {}
+    escalations: list[dict[str, Any]] = []
+
+    for payment in review_payments:
+        student_id = payment.get("matchedStudentId")
+        if student_id:
+            reviews_by_student.setdefault(student_id, []).append(payment)
+        escalations.append({
+            "escalationId": f"PAYMENT-{payment['paymentId']}",
+            "targetType": "PAYMENT",
+            "targetId": payment["paymentId"],
+            "studentId": student_id,
+            "priority": "HIGH" if payment["confidence"] == "NEEDS_REVIEW" else "MEDIUM",
+            "status": "PENDING_HUMAN_REVIEW",
+                "reason": f"{payment['paymentId']} is {payment['confidence']} and cannot reduce verified collections until a reviewer confirms it. {payment['reason']}",
+        })
+
+    for finding in leakage_findings:
+        student_id = finding.get("studentId")
+        if student_id:
+            leakage_by_student.setdefault(student_id, []).append(finding)
+        if finding["category"] != "UNRECONCILED_PAYMENT":
+            escalations.append({
+                "escalationId": finding["findingId"],
+                "targetType": "CONTROL_FINDING",
+                "targetId": finding["findingId"],
+                "studentId": student_id,
+                "priority": finding["severity"],
+                "status": "PENDING_HUMAN_REVIEW",
+                "reason": finding["reason"],
+            })
+
+    decisions: list[dict[str, Any]] = []
+    for position in positions:
+        student_id = position["studentId"]
+        pending_reviews = reviews_by_student.get(student_id, [])
+        high_leakage = [row for row in leakage_by_student.get(student_id, []) if row["severity"] == "HIGH" and row["category"] != "UNRECONCILED_PAYMENT"]
+        decision = {
+            "studentId": student_id,
+            "studentName": position["studentName"],
+            "ageingBucket": position["ageingBucket"],
+            "outstandingPaise": position["outstandingPaise"],
+            "outstanding": position["outstanding"],
+            "requiresHumanReview": False,
+            "relatedPaymentIds": [payment["paymentId"] for payment in pending_reviews],
+        }
+
+        if high_leakage:
+            finding = high_leakage[0]
+            decision.update({
+                "chosenAction": "ESCALATE_FOR_REVIEW",
+                "requiresHumanReview": True,
+                "relatedControlFindingIds": [row["findingId"] for row in high_leakage],
+                "reason": f"{finding['category'].replace('_', ' ').title()} requires a finance-control review. Collection contact and record changes remain blocked until it is resolved.",
+            })
+        elif position["outstandingPaise"] <= 0:
+            decision.update({
+                "chosenAction": "SKIP_PAID_OR_PLAN",
+                "reason": "No outstanding balance remains, so no reminder or collection action is appropriate.",
+            })
+        elif pending_reviews:
+            decision.update({
+                "chosenAction": "ESCALATE_FOR_REVIEW",
+                "requiresHumanReview": True,
+                "reason": f"Payment {pending_reviews[0]['paymentId']} requires reconciliation review. No reminder is advanced until that evidence is resolved.",
+            })
+        elif position["hasApprovedPaymentPlan"]:
+            if position["planCompliance"] == "OVERDUE":
+                decision.update({
+                    "chosenAction": "ESCALATE_FOR_REVIEW",
+                    "requiresHumanReview": True,
+                    "reason": "An approved payment plan is overdue. Escalate to the accounts office for plan review; do not draft a parent reminder.",
+                })
+                escalations.append({
+                    "escalationId": f"PLAN-{student_id}",
+                    "targetType": "STUDENT",
+                    "targetId": student_id,
+                    "studentId": student_id,
+                    "priority": "HIGH",
+                    "status": "PENDING_HUMAN_REVIEW",
+                    "reason": "The approved payment-plan schedule is overdue. A reviewer must decide the next step before any parent contact.",
+                })
+            else:
+                decision.update({
+                    "chosenAction": "SKIP_PAID_OR_PLAN",
+                    "reason": "An approved payment plan is on track, so the case is intentionally excluded from reminder drafting.",
+                })
+        elif position["ageingBucket"] == "60+":
+            decision.update({
+                "chosenAction": "ESCALATE_FOR_REVIEW",
+                "requiresHumanReview": True,
+                "reason": "The balance is more than 60 days overdue. Escalate for an accounts-office decision instead of creating an automatic reminder draft.",
+            })
+            escalations.append({
+                "escalationId": f"AGEING-{student_id}",
+                "targetType": "STUDENT",
+                "targetId": student_id,
+                "studentId": student_id,
+                "priority": "HIGH",
+                "status": "PENDING_HUMAN_REVIEW",
+                "reason": "This account is in the 60+ ageing bucket and needs an accounts-office decision before further collection action.",
+            })
+        elif position["shouldDraftReminder"]:
+            decision.update({
+                "chosenAction": "DRAFT_REMINDER",
+                "reason": f"The balance is overdue in the {position['ageingBucket']} bucket, has no approved plan, and has no unresolved payment match. A validated draft is ready for human review.",
+            })
+        else:
+            decision.update({
+                "chosenAction": "SKIP_PAID_OR_PLAN",
+                "reason": "There is no eligible overdue balance for a reminder draft at this time.",
+            })
+        decisions.append(decision)
+
+    return decisions, escalations
+
+
+def build_finance_run(as_of: date | None = None, use_llm: bool = False, override_data: dict[str, Any] | None = None) -> dict[str, Any]:
     as_of = as_of or date.today()
-    data = load_seed_data()
+    data = override_data or load_seed_data()
     events = [audit_event("FINANCE_RUN_STARTED", {"asOf": as_of.isoformat()})]
     for concession in data["concessions"]:
         events.append(audit_event("CONCESSION_APPROVED", concession, actor=concession.get("approvedBy", "fee-agent-runner")))
@@ -70,8 +201,16 @@ def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[
             "trace": position["trace"],
         }))
 
+    forecast = build_cash_forecast(positions, data["payment_history"], dashboard, as_of)
+    leakage = detect_fee_leakage(data, reconciliation_results, positions, as_of)
+    agent_decisions, escalations = build_agent_decisions(positions, reconciliation_results, leakage["findings"])
     worklist = build_worklist(positions)
-    reminder_drafts = draft_reminders(positions, use_llm=use_llm)
+    decision_by_student = {row["studentId"]: row for row in agent_decisions}
+    eligible_positions = [
+        position for position in positions
+        if decision_by_student[position["studentId"]]["chosenAction"] == "DRAFT_REMINDER"
+    ]
+    reminder_drafts = draft_reminders(eligible_positions, use_llm=use_llm)
     for draft in reminder_drafts:
         events.append(audit_event("REMINDER_DRAFT_CREATED", {
             "studentId": draft["studentId"],
@@ -79,10 +218,25 @@ def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[
             "validationPassed": draft["validationPassed"],
         }))
 
+    events.append(audit_event("CASH_FORECAST_GENERATED", forecast["summary"], actor="forecasting-tool"))
+    for finding in leakage["findings"]:
+        events.append(audit_event("LEAKAGE_FINDING_DETECTED", finding, actor="leakage-control-tool"))
+    for decision in agent_decisions:
+        if decision["chosenAction"] == "DRAFT_REMINDER":
+            events.append(audit_event("REMINDER_DECISION_MADE", {
+                "studentId": decision["studentId"],
+                "action": decision["chosenAction"],
+                "reason": decision["reason"],
+            }))
+    for escalation in escalations:
+        events.append(audit_event("CASE_ESCALATED_FOR_REVIEW", escalation))
+
     events.append(audit_event("FINANCE_RUN_COMPLETED", {
         "studentCount": len(data["students"]),
         "reconciliationCount": len(reconciliation_results),
         "draftCount": len(reminder_drafts),
+        "decisionCount": len(agent_decisions),
+        "escalationCount": len(escalations),
     }))
 
     return {
@@ -93,11 +247,18 @@ def build_finance_run(as_of: date | None = None, use_llm: bool = False) -> dict[
         "reconciliationResults": reconciliation_results,
         "collectionWorklist": worklist,
         "reminderDrafts": reminder_drafts,
+        "forecast": forecast,
+        "leakage": leakage,
+        "agentDecisions": agent_decisions,
+        "escalations": escalations,
         "auditEvents": events,
         "notes": {
             "moneyGuardrail": "All amounts are derived by deterministic Python code using integer paise. The reminder generator is allowed to word messages only.",
             "demoMode": "Local JSON seed data is the default so the assessment demo does not depend on cloud connectivity.",
             "llmMode": "Gemini is optional; when enabled it can word reminders only, and deterministic validation rejects changed amounts or due dates.",
+            "agentDecisionPolicy": "The deterministic workflow chooses only DRAFT_REMINDER, ESCALATE_FOR_REVIEW, or SKIP_PAID_OR_PLAN. Drafts remain human-review only.",
+            "forecastPolicy": "Cash forecasts are deterministic planning estimates from payment history. They never alter ledger totals, collection targets, or parent communication.",
+            "leakagePolicy": "Leakage findings are exception signals that create a review queue. They never reverse fees, refunds, concessions, or payments automatically.",
         },
     }
 
@@ -108,19 +269,22 @@ def maybe_write_firestore(payload: dict[str, Any]) -> None:
     if creds and not os.path.isabs(creds):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str((BASE_DIR / creds).resolve())
     project_id = os.getenv("GCP_PROJECT_ID")
-    credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-    if not project_id or not credentials:
-        print("Skipping Firestore write: GCP_PROJECT_ID or GOOGLE_APPLICATION_CREDENTIALS missing.")
+    if not project_id:
+        print("Skipping Firestore write: GCP_PROJECT_ID is missing.")
         return
 
     from google.cloud import firestore
 
+    # Cloud Run automatically provides Application Default Credentials through
+    # its attached service account. Locally, use `gcloud auth application-default login`.
     db = firestore.Client(project=project_id)
     run_ref = db.collection("finance_runs").document()
     run_ref.set({
         "status": payload["status"],
         "asOf": payload["asOf"],
         "dashboard": payload["dashboard"],
+        "forecast": payload["forecast"]["summary"],
+        "leakageSummary": payload["leakage"]["summary"],
         "createdAt": datetime.now(timezone.utc).isoformat(),
     })
     for name, rows in [
@@ -128,6 +292,10 @@ def maybe_write_firestore(payload: dict[str, Any]) -> None:
         ("reconciliation_results", payload["reconciliationResults"]),
         ("collection_worklist", payload["collectionWorklist"]),
         ("reminder_drafts", payload["reminderDrafts"]),
+        ("forecast_students", payload["forecast"]["studentForecasts"]),
+        ("leakage_findings", payload["leakage"]["findings"]),
+        ("agent_decisions", payload["agentDecisions"]),
+        ("escalations", payload["escalations"]),
         ("audit_events", payload["auditEvents"]),
     ]:
         for row in rows:
@@ -163,6 +331,10 @@ def main() -> None:
             item["paymentId"] for item in payload["reconciliationResults"] if item["requiresHumanReview"]
         ],
         "draftCount": len(payload["reminderDrafts"]),
+        "decisionCount": len(payload["agentDecisions"]),
+        "escalationCount": len(payload["escalations"]),
+        "forecastCashInflow": payload["forecast"]["summary"]["expectedCashInflow"],
+        "leakageFindingCount": payload["leakage"]["summary"]["findingCount"],
     }, indent=2))
 
     if args.firestore:

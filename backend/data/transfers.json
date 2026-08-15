@@ -1,0 +1,10 @@
+[
+  {
+    "transferId": "T001",
+    "studentId": "S004",
+    "status": "COMPLETED",
+    "effectiveDate": "2026-08-10",
+    "destination": "Demo transfer record",
+    "approvedBy": "Registrar"
+  }
+]

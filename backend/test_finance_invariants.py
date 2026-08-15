@@ -115,6 +115,56 @@ class FinanceInvariantTests(unittest.TestCase):
         plan_event = next(event for event in payload["auditEvents"] if event["eventType"] == "PAYMENT_PLAN_APPROVED")
         self.assertEqual(plan_event["actor"], "Accounts Head")
 
+    def test_agent_decisions_are_explainable_and_preserve_money(self):
+        payload = build_finance_run(date(2026, 8, 13), use_llm=False)
+        dashboard = payload["dashboard"]
+        self.assertEqual(dashboard["totalNetDuePaise"], 12_133_500)
+        self.assertEqual(dashboard["totalCollectedPaise"], 5_550_000)
+        self.assertEqual(dashboard["totalOutstandingPaise"], 6_583_500)
+
+        decisions = {row["studentId"]: row for row in payload["agentDecisions"]}
+        self.assertEqual(set(decisions), {"S001", "S002", "S003", "S004"})
+        self.assertTrue(all(row["reason"] for row in decisions.values()))
+        self.assertEqual(decisions["S001"]["chosenAction"], "DRAFT_REMINDER")
+        self.assertEqual(decisions["S002"]["chosenAction"], "DRAFT_REMINDER")
+        self.assertEqual(decisions["S003"]["chosenAction"], "ESCALATE_FOR_REVIEW")
+        self.assertEqual(decisions["S004"]["chosenAction"], "ESCALATE_FOR_REVIEW")
+
+    def test_agent_escalations_keep_ambiguous_payments_visible(self):
+        payload = build_finance_run(date(2026, 8, 13), use_llm=False)
+        escalations = {row["escalationId"]: row for row in payload["escalations"]}
+        self.assertIn("PAYMENT-P003", escalations)
+        self.assertIn("PAYMENT-P004", escalations)
+        self.assertNotIn("PLAN-S003", escalations)
+        self.assertEqual(
+            next(row for row in payload["agentDecisions"] if row["studentId"] == "S003")["relatedPaymentIds"],
+            ["P003"],
+        )
+        audit_types = {event["eventType"] for event in payload["auditEvents"]}
+        self.assertIn("CASE_ESCALATED_FOR_REVIEW", audit_types)
+        self.assertIn("REMINDER_DECISION_MADE", audit_types)
+
+    def test_cash_forecast_is_explicitly_low_confidence_and_does_not_change_ledger(self):
+        payload = build_finance_run(date(2026, 8, 13), use_llm=False)
+        forecast = payload["forecast"]["summary"]
+        self.assertEqual(payload["dashboard"]["totalNetDuePaise"], 12_133_500)
+        self.assertEqual(forecast["historicalRecordCount"], 5)
+        self.assertEqual(forecast["forecastConfidence"], "LOW")
+        self.assertEqual(forecast["expectedCashInflowPaise"], 1_534_682)
+        self.assertIn("S003", forecast["likelyDelayStudentIds"])
+
+    def test_leakage_scan_creates_review_findings_without_mutating_money(self):
+        payload = build_finance_run(date(2026, 8, 13), use_llm=False)
+        findings = {row["findingId"]: row for row in payload["leakage"]["findings"]}
+        self.assertIn("LEAK-PAYMENT-P003", findings)
+        self.assertIn("LEAK-PAYMENT-P004", findings)
+        self.assertIn("LEAK-TRANSFER-T001", findings)
+        self.assertIn("LEAK-REFUND-AUTH-R001", findings)
+        self.assertIn("LEAK-ADJUSTMENT-A001", findings)
+        self.assertEqual(payload["leakage"]["summary"]["highSeverityCount"], 4)
+        self.assertEqual(payload["dashboard"]["totalOutstandingPaise"], 6_583_500)
+        self.assertEqual(len(payload["reminderDrafts"]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

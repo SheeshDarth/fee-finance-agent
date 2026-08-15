@@ -1,0 +1,12 @@
+[
+  {
+    "refundId": "R001",
+    "studentId": "S004",
+    "paymentId": "P005",
+    "date": "2026-08-11",
+    "amountPaise": 350000,
+    "reason": "Demo refund awaiting approval evidence",
+    "status": "PENDING",
+    "approvedBy": null
+  }
+]

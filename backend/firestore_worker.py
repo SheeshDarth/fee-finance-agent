@@ -31,6 +31,8 @@ def publish_run(db: Any, run_ref: Any, payload: dict[str, Any]) -> None:
         "status": "AWAITING_REVIEW" if review_required else "COMPLETE",
         "asOf": payload["asOf"],
         "dashboard": payload["dashboard"],
+        "forecast": payload["forecast"]["summary"],
+        "leakageSummary": payload["leakage"]["summary"],
         "updatedAt": datetime.now(timezone.utc).isoformat(),
     }, merge=True)
     for name, rows in [
@@ -38,6 +40,10 @@ def publish_run(db: Any, run_ref: Any, payload: dict[str, Any]) -> None:
         ("reconciliation_results", payload["reconciliationResults"]),
         ("collection_worklist", payload["collectionWorklist"]),
         ("reminder_drafts", payload["reminderDrafts"]),
+        ("forecast_students", payload["forecast"]["studentForecasts"]),
+        ("leakage_findings", payload["leakage"]["findings"]),
+        ("agent_decisions", payload["agentDecisions"]),
+        ("escalations", payload["escalations"]),
         ("audit_events", payload["auditEvents"]),
     ]:
         for row in rows:
@@ -48,8 +54,10 @@ def process_run(db: Any, run_snapshot: Any) -> None:
     run_ref = run_snapshot.reference
     run_ref.set({"status": "RUNNING", "startedAt": datetime.now(timezone.utc).isoformat()}, merge=True)
     try:
-        as_of = datetime.strptime(run_snapshot.to_dict().get("asOf", "2026-08-13"), "%Y-%m-%d").date()
-        payload = build_finance_run(as_of, use_llm=os.getenv("ENABLE_LLM", "false").lower() == "true")
+        data = run_snapshot.to_dict()
+        as_of = datetime.strptime(data.get("asOf", "2026-08-13"), "%Y-%m-%d").date()
+        override_data = data.get("customData")
+        payload = build_finance_run(as_of, use_llm=os.getenv("ENABLE_LLM", "false").lower() == "true", override_data=override_data)
         publish_run(db, run_ref, payload)
     except Exception as error:
         run_ref.set({"status": "FAILED", "error": str(error), "updatedAt": datetime.now(timezone.utc).isoformat()}, merge=True)
